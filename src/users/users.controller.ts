@@ -2,6 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete ,Request, UseGuards, 
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AuthGuard } from './guards/user.guard';
+import { UpdateUserDto } from './dto/update-user.dto';
+import {User} from "./schemas/user.schema"
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -60,5 +62,10 @@ export class UsersController {
       message:"User has Deleted!!",
       status:HttpStatus.FORBIDDEN
     }
+  }
+
+  @Post(":id/updateUser")
+  async updateUser(@Body()  @Param("id") id:string, updateUserDto:UpdateUserDto):Promise<User>{
+    return this.usersService.updateUser(id,updateUserDto)
   }
 }

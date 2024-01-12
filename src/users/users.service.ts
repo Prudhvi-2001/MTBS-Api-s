@@ -58,4 +58,8 @@ export class UsersService {
   deleteUser(id:string){
     return this.userModel.findByIdAndDelete(id)
   }
+  //To Update the User
+  async updateUser(id:string, updateUserDto:UpdateUserDto):Promise<User>{
+    return this.userModel.findByIdAndUpdate(id,updateUserDto)
+  }
 }
