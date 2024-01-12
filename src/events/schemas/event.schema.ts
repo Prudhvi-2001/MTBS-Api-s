@@ -46,6 +46,18 @@ export class EventDto{
     @IsArray()
     bookings:Booking[]
 }
+export class UpdateEventDto{
+  @IsString({message:"Must be a String"})
+  @IsNotEmpty()
+  name:string;
+  @IsDate()
+  date:Date;
+  @IsArray()
+  @IsNotEmpty()
+  availableSeats:number[];
+  @IsArray()
+  bookings:Booking[]
+}
 function duplicateSeats(array:number[]){
   return array.length === new Set(array).size  //checking if the length of the array is equals to the length of the set is created
 }

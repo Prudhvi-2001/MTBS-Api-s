@@ -2,7 +2,7 @@
 import { Injectable, NotFoundException, BadRequestException, ForbiddenException, HttpStatus, HttpCode } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { Booking, Event, EventDto } from './schemas/event.schema';
+import { Booking, Event, EventDto, UpdateEventDto } from './schemas/event.schema';
 import { UsersService } from '../users/users.service';
 import { selectedDto } from './dto/selected.dto';
 import { User } from 'src/users/schemas/user.schema';
@@ -162,5 +162,25 @@ export class EventsService {
   async findEvent(id:string):Promise<Event>{
     return this.eventModel.findById(id)
   }
+  //To update the event
+  async updateEvent(eventId:string, updatedEventDto:UpdateEventDto):Promise<Object>{
+    await this.eventModel.findByIdAndUpdate(eventId,updatedEventDto)
+    return {
+      message:"Event has been updated",
+      statusCode:HttpStatus.CREATED
+    }
 
+
+  }
+
+  //  To delete the Event
+  async deleteEvent(eventId:string):Promise<Object>{
+    await this.eventModel.findByIdAndDelete(eventId)
+    return {
+      message:"Event has been deleted",
+      statusCode:HttpStatus.CREATED
+    }
+
+
+  }
 }

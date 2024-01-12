@@ -12,9 +12,11 @@ import {
   ValidationPipe,
   ParseArrayPipe,
   SetMetadata,
+  Put,
+  Delete,
 } from '@nestjs/common';
 import { EventsService } from './events.service';
-import { Event, EventDto } from './schemas/event.schema';
+import { Event, EventDto, UpdateEventDto } from './schemas/event.schema';
 import { AuthGuard } from './guards/jwt-auth.guard';
 import { AdminGuard } from './guards/admin.guard';
 @Controller('events')
@@ -51,6 +53,7 @@ export class EventsController {
 // ApiEndpoint : http://localhost:3000/events/:id/availableSeats
 // Method      : GET
 // params      : id - is required
+
   @Get(':eventId/available-seats')
   findAvailableSeats(@Param('eventId') eventId: string): Promise<Object> {
     try{ return this.eventsService.findAvailableSeats(eventId);}
@@ -127,6 +130,34 @@ export class EventsController {
   getEvent(@Param("eventId") eventId:string):Promise<Event>{
     return this.eventsService.findEvent(eventId)
   }
+
+
+  //To update the event
+  //API End Point : http://localhost:3000/events/:eventId/updateEvent
+  //Method         : PUT
+  //Params         : eventId - is required , data - is required
+  //req.body.data contains updated information about the event
+   
+   @UseGuards(AdminGuard)
+   @Put(":eventId/updateEvent")
+  async UpdateEvent(@Body() @Param("eventId") eventId:string, updateEventDto:UpdateEventDto):Promise<Object>{
+    return this.eventsService.updateEvent(eventId ,updateEventDto)
+  }
+
+  //to delete the event with admin authorization
+  //API EndPoint : http://localhost:3000/events/:eventId/delete
+  //Method        : DELETE
+  //Params        : eventId - is required
+
+  
+  @UseGuards(AdminGuard)
+  @Delete(":eventId/deleteEvent")
+  async deleteEvent(@Param("eventId") eventId:string):Promise<Object>{
+    return this.eventsService.deleteEvent(eventId)
+  }
+
+
+  
 }
 
 
