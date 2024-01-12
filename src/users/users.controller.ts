@@ -63,7 +63,9 @@ export class UsersController {
       status:HttpStatus.FORBIDDEN
     }
   }
-
+//To update the User
+//ApiEndPoint:http://localhost:3000/users/:id/updateUser
+//Method:PUT
   @Post(":id/updateUser")
   async updateUser(@Body()  @Param("id") id:string, updateUserDto:UpdateUserDto):Promise<User>{
     return this.usersService.updateUser(id,updateUserDto)

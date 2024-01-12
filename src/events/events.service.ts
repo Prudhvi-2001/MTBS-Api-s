@@ -142,15 +142,15 @@ export class EventsService {
       event.bookings = event.bookings.filter(
         (booking) => {
           const isConfirmed = booking.confirmed;
-          const isWithin1Minute = booking.createdAt > new Date(Date.now() - 1 * 60 * 1000);
+          const within10Minute = booking.createdAt > new Date(Date.now() - 1 * 60 * 1000);
 
-          if (!isConfirmed && !isWithin1Minute) {
+          if (!isConfirmed && ! within10Minute) {
             // Booking is not confirmed and older than 10 minutes
             canceledSeats.push(...booking.seats);
-            return false; // Remove this booking
+            return false; // Remove that particular booking
           }
          
-          return true; // Keep this booking
+          return true; // Keep the booking
         },
       );
       event.availableSeats = [...event.availableSeats, ...canceledSeats]; //updating the available seats with cancelled seats.
