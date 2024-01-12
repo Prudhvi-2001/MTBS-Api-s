@@ -1,11 +1,13 @@
 
 <h1>Movie Ticket Booking System</h1>
-## Description
 <p>The Movie ticket Booking System is a web application inspired by services like BookMyShow, designed to facilitate the seam booking of movie tickets.In this application Backend Api's have been implemented for users to discover movies, select preferred seats and confirm the booking. Those Api's were built by using NestJs Framework.</p>
 
 ## How to Get Started ?
 <p>1. Clone the Repositry</p>
-<p>2. Install dependencies :```bash npm install ```</p>
+<p>2. Install dependencies</p>
+```bash 
+$ npm install
+```
 
 ## How to run Application ?
 
@@ -38,4 +40,18 @@ $ npm run start:prod
 <h5>3. Admin Module</h5>
 <p>Handles to create and manage the bookings of movies</p>
 
-<h3></h3>
+<h3>API Routes</h3>
+<h4>1. Users</h4>
+<p>1.1 Register a User</p>
+<ul>
+<li>Endpoint : /users/createUser</li>
+<li>Method: POST</li>
+<li>Body</li>
+```
+{
+  "username":"username",
+  "email":"email"
+  "password":"password"
+}
+```
+</ul>
