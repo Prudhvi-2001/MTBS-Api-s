@@ -5,6 +5,7 @@
 ## How to Get Started ?
 <p>1. Clone the Repositry</p>
 <p>2. Install dependencies</p>
+
 ```bash 
 $ npm install
 ```
@@ -47,11 +48,17 @@ $ npm run start:prod
 <li>Endpoint : /users/createUser</li>
 <li>Method: POST</li>
 <li>Body</li>
-```
+
+```bash
 {
   "username":"username",
   "email":"email"
   "password":"password"
 }
 ```
+### Note - Validators are used in user schema make sure to provide valid username, password and email
+<img src="readme-Img\1.1.jpg" width="100%" height="100%"/>
+
+
+
 </ul>
