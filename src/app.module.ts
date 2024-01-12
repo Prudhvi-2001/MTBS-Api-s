@@ -7,6 +7,9 @@ import { EventsModule } from './events/events.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ConfigModule } from '@nestjs/config';
 import {databaseUrl} from './users/constants/constants'
+import { AdminService } from './admin/admin.service';
+import { AdminController } from './admin/admin.controller';
+import { AdminModule } from './admin/admin.module';
 @Module({
   imports: [
      MongooseModule.forRoot(databaseUrl.URL),
@@ -16,7 +19,8 @@ import {databaseUrl} from './users/constants/constants'
     ConfigModule.forRoot({
       envFilePath:".env",
       isGlobal:true
-    })],
+    }),
+    AdminModule],
 
   controllers: [AppController],
   providers: [AppService],
