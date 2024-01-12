@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete ,Request, UseGuards, UsePipes, ValidationPipe} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete ,Request, UseGuards, UsePipes, ValidationPipe, HttpStatus} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AuthGuard } from './guards/user.guard';
@@ -49,5 +49,16 @@ export class UsersController {
   listUsers(){
     return this.usersService.findAllUsers();
   }
+  //To delete User 
+  //ApiEndPoint: http://localhost:3000/users/deleterUser/:id
+  //Method:DELETE
 
+  @Get("deleteUser/:id")
+  async deleteUser(@Param('id') id:string):Promise<Object>{
+    this.usersService.deleteUser(id)
+    return {
+      message:"User has Deleted!!",
+      status:HttpStatus.FORBIDDEN
+    }
+  }
 }

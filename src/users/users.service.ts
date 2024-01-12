@@ -54,4 +54,8 @@ export class UsersService {
   getUser(id:string){
     return  this.userModel.findById(id);
   }
+  //To delete the user
+  deleteUser(id:string){
+    return this.userModel.findByIdAndDelete(id)
+  }
 }
