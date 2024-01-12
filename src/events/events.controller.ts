@@ -18,7 +18,7 @@ import {
 import { EventsService } from './events.service';
 import { Event, EventDto, UpdateEventDto } from './schemas/event.schema';
 import { AuthGuard } from './guards/jwt-auth.guard';
-import { AdminGuard } from './guards/admin.guard';
+import { AdminGuard } from '../admin/guards/admin.guard';
 @Controller('events')
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
@@ -157,7 +157,7 @@ export class EventsController {
   }
 
 
-  
+
 }
 
 
