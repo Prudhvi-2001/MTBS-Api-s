@@ -16,7 +16,7 @@ export class UsersService {
 
   async create(user: CreateUserDto): Promise<Object> {
     const existingUser = await this.userModel.findOne({ username: user.username }).exec();
-  
+    if(!user) return{ message:"Can't find user to register! Please give details"}
     if (existingUser) {
       throw new ForbiddenException("User Exist with User name !")
     }
