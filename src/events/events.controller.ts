@@ -38,8 +38,8 @@ export class EventsController {
   @UsePipes(ValidationPipe)
   @UseGuards(AdminGuard)
   async createEvent(@Req() req,@Body() eventDto:EventDto):Promise<Object>{
-    console.log(req.user);
-    return this.eventsService.create(eventDto)
+    const createdBy:string = req.user.username
+    return this.eventsService.create(eventDto,createdBy)
   }
   //To find all the events
   //ApiEndPoint : http://localhost:3000/events

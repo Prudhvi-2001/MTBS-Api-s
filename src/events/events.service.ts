@@ -18,7 +18,7 @@ export class EventsService {
     private readonly usersService: UsersService,
   ) {}
   //To create the specific event with avialbe seats and Bookings available
-  async create(event:EventDto): Promise<Object> {
+  async create(event:EventDto,createBy:string): Promise<Object> {
     const existingEvent = await this.eventModel.findOne({ name:event.name }).exec();
     if (existingEvent) {
       throw new ForbiddenException("Event is already exist")
@@ -28,6 +28,7 @@ export class EventsService {
     return {
       message:"Event has been registered",
       statusCode:HttpStatus.CREATED,
+      createdBy:createBy,
       createdAt: new Date().toDateString()
     }
   }

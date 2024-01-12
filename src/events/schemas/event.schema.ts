@@ -38,12 +38,10 @@ export class EventDto{
     @IsString({message:"Must be a String"})
     @IsNotEmpty()
     name:string;
-    @IsDate()
     date:Date;
     @IsArray()
     @IsNotEmpty()
     availableSeats:number[];
-    @IsArray()
     bookings:Booking[]
 }
 export class UpdateEventDto{
