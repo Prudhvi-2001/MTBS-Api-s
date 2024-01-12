@@ -47,17 +47,88 @@ $ npm run start:prod
 <ul>
 <li>Endpoint : /users/createUser</li>
 <li>Method: POST</li>
-<li>Body</li>
+<li>Body :</li>
+
 
 ```bash
 {
   "username":"username",
-  "email":"email"
+  "email":"email",
   "password":"password"
 }
 ```
-### Note - Validators are used in user schema make sure to provide valid username, password and email
-<img src="readme-Img\1.1.jpg" width="100%" height="100%"/>
+<p> Note - Validators are used in user schema make sure to provide valid username, password and email </p>
+<img
+  src="readme-Img\1.1.jpg"
+  width="100%"
+  height="100%"
+  style="
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out;
+  "
+  onmouseover="this.style.transform='scale(1.1)'"
+  onmouseout="this.style.transform='scale(1)'"
+/>
+
+
+
+<img
+  src="readme-Img\1.2.jpg"
+  width="100%"
+  height="100%"
+  style="
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out;
+  "
+  onmouseover="this.style.transform='scale(1.1)'"
+  onmouseout="this.style.transform='scale(1)'"
+/>
+
+
+<p>1.2 Login</p>
+<ul>
+<li>Endpoint : /users/login</li>
+<li>Method: POST</li>
+<li>Body :</li>
+
+
+```bash
+{
+  "username":"username",
+  "password":"password"
+}
+```
+
+<img
+  src="readme-Img\1.3.jpg"
+  width="100%"
+  height="100%"
+  style="
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out;
+  "
+  onmouseover="this.style.transform='scale(1.1)'"
+  onmouseout="this.style.transform='scale(1)'"
+/>
+
+<img
+  src="readme-Img\1.4.jpg"
+  width="100%"
+  height="100%"
+  style="
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out;
+  "
+  onmouseover="this.style.transform='scale(1.1)'"
+  onmouseout="this.style.transform='scale(1)'"
+/>
+
+
+
 
 
 
