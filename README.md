@@ -30,7 +30,7 @@ $ npm run start:prod
   <li>Admin Functionality: Admin have Capability to create new movies and manage bookings
   </li>
   <li>Cancellation Policy: Unconfirmed bookings are automatically canceled after 10 minutes, ensuring the seat availability to other users</li>
-  <li>Movies Can only booked by authorized used by using the JWT Token</li>
+  <li>Movies Can only booked by authorized user by using the JWT Token</li>
 </ul>
 
 <h3>Modules</h3>
@@ -57,33 +57,30 @@ $ npm run start:prod
   "password":"password"
 }
 ```
-<p> Note - Validators are used in user schema make sure to provide valid username, password and email </p>
+<p> Note - Validators are used in user schema make sure to provide valid username, password and email. </p>
 <img
   src="readme-Img\1.1.jpg"
-  width="100%"
-  height="100%"
+  width="80%"
+  height="80%"
   style="
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     transition: transform 0.3s ease-in-out;
   "
-  onmouseover="this.style.transform='scale(1.1)'"
-  onmouseout="this.style.transform='scale(1)'"
 />
 
 
 
 <img
   src="readme-Img\1.2.jpg"
-  width="100%"
-  height="100%"
+  width="80%"
+  height="80%"
   style="
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     transition: transform 0.3s ease-in-out;
   "
-  onmouseover="this.style.transform='scale(1.1)'"
-  onmouseout="this.style.transform='scale(1)'"
+ 
 />
 
 
@@ -92,6 +89,7 @@ $ npm run start:prod
 <li>Endpoint : /users/login</li>
 <li>Method: POST</li>
 <li>Body :</li>
+
 
 
 ```bash
@@ -103,30 +101,31 @@ $ npm run start:prod
 
 <img
   src="readme-Img\1.3.jpg"
-  width="100%"
-  height="100%"
+  width="80%"
+  height="80%"
   style="
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     transition: transform 0.3s ease-in-out;
   "
-  onmouseover="this.style.transform='scale(1.1)'"
-  onmouseout="this.style.transform='scale(1)'"
+  
 />
 
 <img
   src="readme-Img\1.4.jpg"
-  width="100%"
-  height="100%"
+  width="80%"
+  height="80%"
   style="
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     transition: transform 0.3s ease-in-out;
   "
-  onmouseover="this.style.transform='scale(1.1)'"
-  onmouseout="this.style.transform='scale(1)'"
 />
-
+<p>1.3 Get Profile</p>
+<ul>
+<li>Endpoint : /users/:id</li>
+<li>Method: GET</li>
+<p>Note : Id should be passed as Params</p>
 
 
 

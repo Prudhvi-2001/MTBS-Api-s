@@ -1,6 +1,6 @@
 import { ForbiddenException, HttpException, HttpStatus, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { updateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
@@ -45,10 +45,6 @@ export class UsersService {
           statusCode:HttpStatus.CREATED,
         };
 }
-//To list the users 
-  async findAllUsers():Promise<User[]>{
-    return this.userModel.find().exec();
-  }
   
 //To get the specific User
   getUser(id:string){
@@ -59,7 +55,7 @@ export class UsersService {
     return this.userModel.findByIdAndDelete(id)
   }
   //To Update the User
-  async updateUser(id:string, updateUserDto:UpdateUserDto):Promise<User>{
-    return this.userModel.findByIdAndUpdate(id,updateUserDto)
-  }
+  async updateUser(id:string, updateUserDto:updateUserDto):Promise<Object>{
+  return this.userModel.findByIdAndUpdate(id,updateUserDto)
+}
 }

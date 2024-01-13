@@ -14,6 +14,7 @@ import {
   SetMetadata,
   Put,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { Event, EventDto, UpdateEventDto } from './schemas/event.schema';
@@ -83,7 +84,6 @@ export class EventsController {
     @Body('seats') seats: number[],
   ): Promise<Object> {
     const userId:string = req.user.sub
-    console.log(userId);
     try {
      return  await this.eventsService.bookSeats(eventId, userId, seats);
     } catch (error) {
@@ -126,9 +126,9 @@ export class EventsController {
   //Method        : GET
   //Params        : id - is required
 
-  @Get(":eventId")
-  getEvent(@Param("eventId") eventId:string):Promise<Event>{
-    return this.eventsService.findEvent(eventId)
+  @Get("getEvent")
+  getEvent(@Query("Id") Id:string):Promise<Event>{
+    return this.eventsService.findEvent(Id)
   }
 
 
@@ -140,7 +140,7 @@ export class EventsController {
    
    @UseGuards(AdminGuard)
    @Put(":eventId/updateEvent")
-  async UpdateEvent(@Body() @Param("eventId") eventId:string, updateEventDto:UpdateEventDto):Promise<Object>{
+  async UpdateEvent(@Body() updateEventDto:UpdateEventDto ,@Param("eventId") eventId:string):Promise<Object>{
     return this.eventsService.updateEvent(eventId ,updateEventDto)
   }
 
@@ -155,8 +155,6 @@ export class EventsController {
   async deleteEvent(@Param("eventId") eventId:string):Promise<Object>{
     return this.eventsService.deleteEvent(eventId)
   }
-
-
 
 }
 

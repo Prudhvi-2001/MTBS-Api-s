@@ -2,7 +2,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import MongooseSchema from'mongoose'
-import { IS_ARRAY, IsArray, IsDate, IsNotEmpty, IsString, isArray, isNotEmpty } from 'class-validator';
+import { IS_ARRAY, IsArray, IsDate, IsNotEmpty, IsOptional, IsString, isArray, isNotEmpty } from 'class-validator';
 export class Booking{
   @Prop()
   user:string;
@@ -27,8 +27,9 @@ export class Event extends Document {
   @Prop({ required: true })
   date: Date;
 
-  @Prop({ type: [Number], default: Array.from({ length: 100 }, (_, i) => i + 1), validate:[duplicateSeats,"Found duplicate seat numbers"],required:true})
+  @Prop({ type: [Number], default: Array.from({ length: 100 }, (_, i) => i + 1),required:true})
   availableSeats: number[];
+
 
   @Prop({ default: [] })
   bookings: Booking[];
@@ -38,10 +39,13 @@ export class EventDto{
     @IsString({message:"Must be a String"})
     @IsNotEmpty()
     name:string;
+    @IsOptional()
     date:Date;
+
     @IsArray()
     @IsNotEmpty()
     availableSeats:number[];
+
     bookings:Booking[]
 }
 export class UpdateEventDto{

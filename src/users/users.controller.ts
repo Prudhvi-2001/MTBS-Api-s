@@ -1,8 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete ,Request, UseGuards, UsePipes, ValidationPipe, HttpStatus} from '@nestjs/common';
+import { Controller, Get, Post, Body, Req,Patch, Param,Put, Delete ,Request, UseGuards, UsePipes, ValidationPipe, HttpStatus} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AuthGuard } from './guards/user.guard';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { updateUserDto } from './dto/update-user.dto';
 import {User} from "./schemas/user.schema"
 @Controller('users')
 export class UsersController {
@@ -36,20 +36,20 @@ export class UsersController {
   login(@Body() loginUser:CreateUserDto){
     return this.usersService.login(loginUser.username,loginUser.password)
   }
-//To get specific user 
-//ApiEndPoint:http://localhost:3000/users/:id
+//To check whether token is extracted by the headers and payload
+//ApiEndPoint:http://localhost:3000/users/profile
 //Method: GET
   @Get("profile")
   @UseGuards(AuthGuard)
   profile(@Request() req){
     return req.user
   }
-//To get all Users
-//ApiEndPoint:http://localhost:3000/users
-//Method:GET
-  @Get("allUsers")
-  listUsers(){
-    return this.usersService.findAllUsers();
+
+  //To get the specific user
+//  ApiEndpoint: http://localhost:3000/users/:id
+  @Get(':id')
+  async getUser(@Param("id") id:string):Promise<User>{
+    return this.usersService.getUser(id);
   }
   //To delete User 
   //ApiEndPoint: http://localhost:3000/users/deleterUser/:id
@@ -60,14 +60,15 @@ export class UsersController {
     this.usersService.deleteUser(id)
     return {
       message:"User has Deleted!!",
-      status:HttpStatus.FORBIDDEN
     }
   }
 //To update the User
 //ApiEndPoint:http://localhost:3000/users/:id/updateUser
 //Method:PUT
-  @Post(":id/updateUser")
-  async updateUser(@Body()  @Param("id") id:string, updateUserDto:UpdateUserDto):Promise<User>{
-    return this.usersService.updateUser(id,updateUserDto)
+  @UseGuards(AuthGuard)
+  @Put('updateUser')
+  async updateProfile(@Req() req, @Body() updateUserDto: updateUserDto) {
+    const userId = req.user.sub
+    return this.usersService.updateUser(userId, updateUserDto);
   }
 }

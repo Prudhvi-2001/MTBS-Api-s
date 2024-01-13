@@ -10,9 +10,6 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class EventsService {
-  private  confirmedSeats:{[userId:string]:number[]} = {};
-
-  private allReadySelectedSeats:selectedDto[]=[]
   constructor(
     @InjectModel(Event.name) private readonly eventModel: Model<Event>,
     private readonly usersService: UsersService,
@@ -20,8 +17,13 @@ export class EventsService {
   //To create the specific event with avialbe seats and Bookings available
   async create(event:EventDto,createBy:string): Promise<Object> {
     const existingEvent = await this.eventModel.findOne({ name:event.name }).exec();
+    if(!event.availableSeats){ throw new NotFoundException("Can't find seats"); } 
     if (existingEvent) {
       throw new ForbiddenException("Event is already exist")
+    }
+    const hasDuplicateSets = new Set(event.availableSeats).size !== event.availableSeats.length
+    if(hasDuplicateSets){
+      throw new BadRequestException("Duplicate seats found. Please provide valid seat numbers.");
     }
     const newEvent = new this.eventModel(event)
     newEvent.save()
@@ -54,6 +56,12 @@ export class EventsService {
 //To book the seats
   async bookSeats(eventId: string, userId: string, seats: number[]): Promise<Object> {
     const event = await this.eventModel.findById(eventId).exec();
+    const hasDuplicates = new Set(seats).size !== seats.length;
+    if (hasDuplicates) {
+      throw new BadRequestException("Duplicate seat numbers are not allowed");
+    }
+    if(seats.length === 0) {throw new BadRequestException("Please mention seats!");}
+    console.log(seats.length);
     if (!Array.isArray(seats)) {
       throw new BadRequestException("Invalid seats format. Please provide seat numbers.");
     }
@@ -81,7 +89,7 @@ export class EventsService {
     if (unavailableSeats.length > 0) {
       throw new BadRequestException(`Seats ${unavailableSeats.join(', ')} are not available`);
     }
-
+    console.log(userId);
     const user = await this.usersService.getUser(userId);
     event.bookings.push({
       user: userId,
@@ -154,7 +162,11 @@ export class EventsService {
           return true; // Keep the booking
         },
       );
-      event.availableSeats = [...event.availableSeats, ...canceledSeats]; //updating the available seats with cancelled seats.
+      const hasDuplicates = new Set(canceledSeats).size !== canceledSeats.length
+      if(!hasDuplicates){
+        event.availableSeats = [...event.availableSeats, ...canceledSeats]; //updating the available seats with cancelled seats.
+      }
+   
       event.markModified('bookings'); //to update the confirmation state in db
       await event.save();
     }
@@ -184,4 +196,5 @@ export class EventsService {
 
 
   }
+  
 }
