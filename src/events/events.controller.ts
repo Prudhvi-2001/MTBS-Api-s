@@ -55,8 +55,8 @@ export class EventsController {
 // Method      : GET
 // params      : id - is required
 
-  @Get(':eventId/available-seats')
-  findAvailableSeats(@Param('eventId') eventId: string): Promise<Object> {
+  @Get('available-seats')
+  findAvailableSeats(@Query('movieId') eventId: string): Promise<Object> {
     try{ return this.eventsService.findAvailableSeats(eventId);}
     catch(error){
       if (error instanceof NotFoundException) {
@@ -77,9 +77,9 @@ export class EventsController {
 //req.body={ "seats":[12,13,14]}
 
   @UseGuards(AuthGuard)
-  @Post(':eventId/book-seats')
+  @Post('book-seats')
   async bookSeats(
-    @Param('eventId') eventId: string,
+    @Query('movieId') eventId: string,
     @Req() req,
     @Body('seats') seats: number[],
   ): Promise<Object> {
@@ -105,8 +105,8 @@ export class EventsController {
 
 
   @UseGuards(AuthGuard)
-  @Post(':eventId/confirm-booking')
-  async confirmBooking(@Param('eventId') eventId: string, @Req() req): Promise<Object> {
+  @Post('confirm-booking')
+  async confirmBooking(@Query('movieId') eventId: string, @Req() req): Promise<Object> {
     const userId = req.user.sub;
      
     try {

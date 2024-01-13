@@ -50,7 +50,7 @@ export class EventsService {
 
     return {
       seatsAvailable:availableSeats,
-      status:HttpStatus.FOUND
+      status:HttpStatus.OK
     };
   }
 //To book the seats
@@ -104,7 +104,7 @@ export class EventsService {
 
     return {
       msg:`${user.username} , You have reserved seats  ${seats.join(', ')} ! Please confirm.`,
-      status:HttpStatus.CREATED
+      status:HttpStatus.ACCEPTED
     }
   }
 
@@ -134,7 +134,7 @@ export class EventsService {
     return {
       message:`Hurray !! , Booking confirmed! Seats booked: ${confirmedSeats}`,
       bookingConfirmation:booking.confirmed,
-      status:HttpStatus.CREATED
+      status:HttpStatus.NO_CONTENT
     };
     
   }
