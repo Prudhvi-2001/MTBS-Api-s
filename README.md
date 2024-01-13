@@ -455,20 +455,6 @@ $ npm run start:prod
     transition: transform 0.3s ease-in-out;
   "
  />
-
- <img
-  src="readme-Img\2.5.jpg"
-  width="80%"
-  height="80%"
-  style="
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    transition: transform 0.3s ease-in-out;
-  "
- />
-
- <li>
-
  <li>Final Response</li>
 
  ```bash
@@ -630,6 +616,82 @@ $ npm run start:prod
     "message": "Event has been updated",
     "statusCode": 201
 }
+
+```
+</ul>
+<h3>API's Overview</h3>
+<ul>
+<li>To register user</li>
+
+```bash
+http://localhost:3000/users/createUser
+```
+<li>Login User</li>
+
+```bash
+http://localhost:3000/users/login
+```
+<li>Get User's profile </li>
+
+```bash 
+http://localhost:3000/users/getUser?id=65a11e0146b8e77bb381cda5
+
+```
+<li>Update User</li>
+
+```bash
+http://localhost:3000/users/updateUser?id=65a11e0146b8e77bb381cda5
+
+```
+<li>Delete User</li>
+
+```bash
+http://localhost:3000/users/deleteUser?id=65a11e0146b8e77bb381cda5
+
+```
+
+<li>Create an event (only admin can do it)</li>
+
+```bash
+http://localhost:3000/events/createEvent
+
+```
+<li>List available seats for specific event</li>
+
+```bash
+http://localhost:3000/events/available-seats?movieId=65a2502676c6c5720eacf3c1
+
+```
+<li>Get Details for specific event</li>
+
+```bash
+http://localhost:3000/events/getEvent?movieId=65a2502676c6c5720eacf3c1
+
+```
+<li>Book seats for specific event</li>
+
+```bash
+http://localhost:3000/events/book-seats?movieId=65a2502676c6c5720eacf3c1
+
+```
+
+<li>confirm the seats </li>
+
+```bash
+http://localhost:3000/events/confirm-booking?movieId=65a2502676c6c5720eacf3c1
+
+```
+<li>Modify the event (Only Amdin)</li>
+
+```bash
+http://localhost:3000/events/updateEvent?movieId=65a2502676c6c5720eacf3c1
+
+```
+
+<li>Delete the Event(Only Admin)</li>
+
+```bash
+http://localhost:3000/events/deleteEvent?movieId=65a2502676c6c5720eacf3c1
 
 ```
 </ul>
