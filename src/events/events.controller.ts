@@ -137,10 +137,11 @@ export class EventsController {
   //Method         : PUT
   //Params         : eventId - is required , data - is required
   //req.body.data contains updated information about the event
-   
-   @UseGuards(AdminGuard)
-   @Put(":eventId/updateEvent")
-  async UpdateEvent(@Body() updateEventDto:UpdateEventDto ,@Param("eventId") eventId:string):Promise<Object>{
+  @SetMetadata("isAdmin",true)
+  @UseGuards(AdminGuard)
+  @Put("updateEvent")
+  async UpdateEvent(@Req() req ,@Body() updateEventDto:UpdateEventDto , @Query("movieId") eventId:string):Promise<Object>{
+    console.log(req.user.sub);
     return this.eventsService.updateEvent(eventId ,updateEventDto)
   }
 
@@ -149,10 +150,10 @@ export class EventsController {
   //Method        : DELETE
   //Params        : eventId - is required
 
-  
+  @SetMetadata("isAdmin",true)
   @UseGuards(AdminGuard)
-  @Delete(":eventId/deleteEvent")
-  async deleteEvent(@Param("eventId") eventId:string):Promise<Object>{
+  @Delete("deleteEvent")
+  async deleteEvent(@Param("movieId") eventId:string):Promise<Object>{
     return this.eventsService.deleteEvent(eventId)
   }
 

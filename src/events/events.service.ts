@@ -184,7 +184,6 @@ export class EventsService {
       statusCode:HttpStatus.CREATED
     }
 
-
   }
 
   //  To delete the Event

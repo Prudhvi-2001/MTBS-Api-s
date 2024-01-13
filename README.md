@@ -82,6 +82,15 @@ $ npm run start:prod
     transition: transform 0.3s ease-in-out;
   "
  />
+ ```
+<li>Response</li>
+
+```bash
+{
+  "message":"User has been Registered Successfully",
+  "status":201
+}
+```
 </ul>
 
 
@@ -99,15 +108,7 @@ $ npm run start:prod
   "username":"username",
   "password":"password"
 }
-```
-<li>Response</li>
 
-```bash
-{
-  "message":"User has been Registered Successfully",
-  "status":201
-}
-```
 
 <img
   src="readme-Img\1.3.jpg"
@@ -304,7 +305,7 @@ $ npm run start:prod
     "createdBy": "admin",
     "createdAt": "Sat Jan 13 2024"
 }
- 
+
  ```
 
  <img
@@ -529,4 +530,106 @@ $ npm run start:prod
   "
  />
 </ul>
+</ul>
+
+<h5>2.6 Unconfirmed will get cancelled in 10min</h5>
+<ul>
+<p>Task Scheduler is used to trigger the function in specified time to check the unconfirm seats in database.</p>
+<p>Seat 18 has been reserved by the user. If the user do not confirm the seat within 10 minutes. It will be cancelled.</p>
+
+<img
+  src="readme-Img\3.2.jpg"
+  width="80%"
+  height="80%"
+  style="
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out;
+  "
+ />
+
+ <p>Check seat 18 is availabe or not in available seats</p>
+
+ <img
+  src="readme-Img\3.3.jpg"
+  width="80%"
+  height="80%"
+  style="
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out;
+  "
+ />
+<p>You cans see seat 18 is not availble</p>
+<li>Response</li>
+
+```bash
+{
+  "seatsAvailable":[1,2,3,4,5,6,7,8,9,10,16,17,19,20,25,55,87],
+  "status":200
+  
+}
+
+```
+<p>Check after 10min whether the seat is added to available seats</p>
+<img
+  src="readme-Img\3.3.jpg"
+  width="80%"
+  height="80%"
+  style="
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out;
+  "
+ />
+ <p>You can see seat 18 is again added to the available seats since it was not confirmed ny the user</p>
+ <li>Response</li>
+
+ ```bash
+ {
+  "seatsAvailable":[1,2,3,4,5,6,7,8,9,10,16,17,19,20,25,55,87,18],
+  "status":200
+  
+}
+ ```
+
+<h5>Similarly, Admin would be able to modify, delete the specific event </h5>
+<ul>
+<h4>Delete Event</h4>
+<li>Endpoint : /events/deleteEvent?movieId={Id of specific movie}</li>
+<li>Method: DELETE</li>
+<li>Headers: Token(Admin)</li>
+<li>Response</li>
+
+```bash
+{
+    "message": "Event has been deleted",
+    "statusCode": 201
+}
+```
+</ul>
+
+<ul>
+<h4>Update Event</h4>
+<li>Endpoint : /events/updateEvent?movieId={Id of specific movie}</li>
+<li>Method: PUT</li>
+<li>Headers: Token(Admin)</li>
+<li>Body</li>
+
+```bash
+{
+ "availableSeats":[1,2,3,4,5,6,7,8,9,10,
+                   11,12,13,14,15,16,17,
+                   18,19,20,25,55,87,89,90]
+}
+```
+<li>Response</li>
+
+```bash
+{
+    "message": "Event has been updated",
+    "statusCode": 201
+}
+
+```
 </ul>
