@@ -3,8 +3,8 @@
 <p>The Movie ticket Booking System is a web application inspired by services like BookMyShow, designed to facilitate the seam booking of movie tickets.In this application Backend Api's have been implemented for users to discover movies, select preferred seats and confirm the booking. Those Api's were built by using NestJs Framework.</p>
 
 ## How to Get Started ?
-<p>1. Clone the Repositry</p>
-<p>2. Install dependencies</p>
+<p>1. Clone the Repositry.</p>
+<p>2. Install dependencies.</p>
 
 ```bash 
 $ npm install
@@ -25,21 +25,21 @@ $ npm run start:prod
 <h3>Features</h3>
 <ul>
   <li>User Registration and Authentication : Users can register for an account and log in securely.</li>
-  <li>Movie Booking : Book seats for selected movies and confirm reservations</li>
-  <li>Seat Selection: Select Preferred seats from the available Seats</li>
-  <li>Admin Functionality: Admin have Capability to create new movies and manage bookings
+  <li>Movie Booking : Book seats for selected movies and confirm reservations.</li>
+  <li>Seat Selection: Select Preferred seats from the available Seats.</li>
+  <li>Admin Functionality: Admin have Capability to create new movies and manage bookings.
   </li>
-  <li>Cancellation Policy: Unconfirmed bookings are automatically canceled after 10 minutes, ensuring the seat availability to other users</li>
-  <li>Movies Can only booked by authorized user by using the JWT Token</li>
+  <li>Cancellation Policy: Unconfirmed bookings are automatically canceled after 10 minutes, ensuring the seat availability to other users.</li>
+  <li>Movies Can only booked by authorized user by using the JWT Token.</li>
 </ul>
 
 <h3>Modules</h3>
 <h5>1. Users Module</h5>
-<p>Manages user profiles, providing users the ability to view and update their information and can book movies</p>
+<p>Manages user profiles, providing users the ability to view and update their information and can book movies.</p>
 <h5>2. Events Module</h5>
-<p>Handles movie events, including creation, seat availability, and booking confirmation</p>
+<p>Handles movie events, including creation, seat availability, and booking confirmation.</p>
 <h5>3. Admin Module</h5>
-<p>Handles to create and manage the bookings of movies</p>
+<p>Handles to create and manage the bookings of movies.</p>
 
 <h3>API Routes</h3>
 <h4>1. Users</h4>
@@ -58,6 +58,16 @@ $ npm run start:prod
   "password":"password"
 }
 ```
+
+<li>Response</li>
+
+```bash
+{
+  "message":"User has been Registered Successfully",
+  "status":201
+}
+```
+
 <p> Note - Validators are used in user schema make sure to provide valid username, password and email. </p>
 <img
   src="readme-Img\1.1.jpg"
@@ -83,14 +93,7 @@ $ npm run start:prod
   "
  />
  ```
-<li>Response</li>
 
-```bash
-{
-  "message":"User has been Registered Successfully",
-  "status":201
-}
-```
 </ul>
 
 
@@ -234,7 +237,7 @@ $ npm run start:prod
 
 <p>Note : Only Admin would be able to create Movie. Pass the admin token in authorization headers</p>
 
-<li>How to admin token?</li>
+<li>How to get admin token?</li>
 
 <img
   src="readme-Img\1.8.jpg"
@@ -395,7 +398,7 @@ $ npm run start:prod
 
 </ul>
 
-<h5>2.4 Reserving a seats for particular Movie</h5>
+<h5>2.4 Book seats for particular Movie</h5>
 <ul>
 <li>Endpoint : /events/book-seats?movieId={Id of specific movie}</li>
 <li>Method: POST</li>
@@ -455,6 +458,7 @@ $ npm run start:prod
     transition: transform 0.3s ease-in-out;
   "
  />
+ 
  <li>Final Response</li>
 
  ```bash
