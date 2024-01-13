@@ -131,7 +131,7 @@ $ npm run start:prod
 ```bash
 {
   "token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NWExMWUwMTQ2YjhlNzdiYjM4MWNkYTUiLCJ1c2VybmFtZSI6IkV4YW1wbGUiLCJpYXQiOjE3MDUxMzIzMTUsImV4cCI6MTcwNTEzNTkxNX0.zkKolr8vcRxrxHm8dRAxCdWAkIbezhHx_ok45hoMIBI",
-  "satus":201
+  "status":201
 }
 ```
 <p>1.3 Get Profile</p>
@@ -179,9 +179,14 @@ $ npm run start:prod
 <li>Endpoint : /users/deleteUser?id={Id of user}</li>
 <li>Method: DELETE</li>
 <p>Note : Id should be passed as Params</p>
+<li>Response</li>
 
+```bash
+{
 
-
+    "message": "User has Deleted!!"
+}
+```
 
 <img
   src="readme-Img\1.7.jpg"
@@ -194,12 +199,323 @@ $ npm run start:prod
   "
  />
  
- 
+ <h4>2. Event Module</h4>
+<h5>2.1 Register a Movie</h5>
+<ul>
+<li>Endpoint : /events/createEvent</li>
+<li>Method: POST</li>
+<li>Headers: Token(Admin)</li>
+<li>Body :</li>
+
 ```bash
 {
-
-    "message": "User has Deleted!!"
+  "name":"Jurassic Park",
+  "date":"2024-01-13T09:30:00Z",
+  "availableSeats":[1,2,3,4,5,6,7,8,9,10,
+                   11,12,13,14,15,16,17,
+                    18,19,20,25,55,87...],
+  "Booking":[]
 }
 ```
+
+<p>Note : Only Admin would be able to create Movie. Pass the admin token in authorization headers</p>
+
+<li>How to admin token?</li>
+
+<img
+  src="readme-Img\1.8.jpg"
+  width="80%"
+  height="80%"
+  style="
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out;
+  "
+ />
+
+<li>What if token isn't provided?</li>
+
+<img
+  src="readme-Img\1.9.jpg"
+  width="80%"
+  height="80%"
+  style="
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out;
+  "
+ />
+
+ <ul>
+ <h4>Validations while registering the Event</h4>
+ <li>What if request data isn't proper?</li>
+ <img
+  src="readme-Img\2.0.jpg"
+  width="80%"
+  height="80%"
+  style="
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out;
+  "
+ />
+ <li>What if availableSeats field is empty and duplicate seats are there? </li>
+
+ <img
+  src="readme-Img\2.1.jpg"
+  width="80%"
+  height="80%"
+  style="
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out;
+  "
+ />
+ <img
+  src="readme-Img\2.2.jpg"
+  width="80%"
+  height="80%"
+  style="
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out;
+  "
+ />
+
+ <li>Final Response</li>
+
+```bash 
+ {
+    "message": "Event has been registered",
+    "statusCode": 201,
+    "createdBy": "admin",
+    "createdAt": "Sat Jan 13 2024"
+}
+ 
+ ```
+
+ <img
+  src="readme-Img\2.3.jpg"
+  width="80%"
+  height="80%"
+  style="
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out;
+  "
+ />
+
+
+
+ 
+ </ul>
+
+ <h5>2.2 Listing available seats for particular Movie</h5>
+<ul>
+<li>Endpoint : /events/available-seats?movieId={Id of specific movie}</li>
+<li>Method: GET</li>
+<img
+  src="readme-Img\3.0.jpg"
+  width="80%"
+  height="80%"
+  style="
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out;
+  "
+ />
+ <li>Response</li>
+
+```bash
+ {
+  "seatsAvailable":
+  [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,25,55,87],
+  "status":200
+  
+  }
+
+
+```
+<h5>2.2 Listing a particular Movie</h5>
+<ul>
+<li>Endpoint : /events/getEvent?movieId={Id of specific movie}</li>
+<li>Method: GET</li>
+
+
+```bash
+{
+     "_id":"65a2502676c6c5720eacf3c1",
+     "name":"Jurassic Park",
+     "date":"2024-01-13T09:30:00.000Z",
+     "availableSeats":[1,2,3,4,5,6,7,8,9,10,16,17,18,19,20,25,55,87],
+     "bookings":[
+      {
+        "user":"65a2576773457a7bd5c16298",
+        "seats":[11,12,13,14,15],
+        "confirmed":true,
+        "createdAt":"2024-01-13T09:34:18.231Z"}],
+        "__v":53
+        }
+```
+<img
+  src="readme-Img\3.1.jpg"
+  width="80%"
+  height="80%"
+  style="
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out;
+  "
+ />
+ <li>Response</li>
+
+```bash
+ {
+  "seatsAvailable":
+  [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,25,55,87],
+  "status":200
+  
+  }
+
+
+```
+
+
+<h5>2.4 Reserving a seats for particular Movie</h5>
+<ul>
+<li>Endpoint : /events/book-seats?movieId={Id of specific movie}</li>
+<li>Method: POST</li>
+<li>Headers: Token(User)</li>
+<li>Body :</li>
+
+```bash 
+{
+  seats:[1,2,3,4]
+}
+``` 
+<ul>
+<h4>Validations while reserving seats</h4>
+<li>What if request body is empty ?</li>
+<img
+  src="readme-Img\2.4.jpg"
+  width="80%"
+  height="80%"
+  style="
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out;
+  "
+ />
+ <li>What is request body has duplicate seats?</li>
+ <img
+  src="readme-Img\2.5.jpg"
+  width="80%"
+  height="80%"
+  style="
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out;
+  "
+ />
+ <p>If you're picking a seat which is already reserved for another. It throws Exception So,
+ In this way no two users can book the same seat</p>
+
+ ```bash
+ {
+    "message": "Seats 11, 12, 13, 14, 15 are not available",
+    "error": "Bad Request",
+    "statusCode": 400
+} ```
+
+ <img
+  src="readme-Img\2.9.jpg"
+  width="80%"
+  height="80%"
+  style="
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out;
+  "
+ />
+
+ <img
+  src="readme-Img\2.5.jpg"
+  width="80%"
+  height="80%"
+  style="
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out;
+  "
+ />
+
+ <li>
+
+ <li>Final Response</li>
+
+ ```bash
+ {
+  "msg":"sampleUser , You have reserved seats 11,12,13,14,15 ! Please confirm",
+  status:202
+ }
+ ```
+
+ <img
+  src="readme-Img\2.6.jpg"
+  width="80%"
+  height="80%"
+  style="
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out;
+  "
+ />
+
+</ul>
+
+
+<h5>2.4 Confirming seats for particular Movie</h5>
+<ul>
+<li>Endpoint : /events/confirm-seats?movieId={Id of specific movie}</li>
+<li>Method: POST</li>
+<li>Headers: Token(User)</li>
+
+<ul>
+<li>What if user do not have unconfirmed bookings?</li>
+<img
+  src="readme-Img\2.8.jpg"
+  width="80%"
+  height="80%"
+  style="
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out;
+  "
+ />
+<li>Response</li>
+
+```bash 
+{
+    "message": "Hurray !! , Booking confirmed! Seats booked: 11, 12, 13, 14, 15",
+    "bookingConfirmation": true,
+    "status": 204
+}
+```
+<img
+  src="readme-Img\2.7.jpg"
+  width="80%"
+  height="80%"
+  style="
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out;
+  "
+ />
+
+
+</ul>
+
+
+
 
 </ul>

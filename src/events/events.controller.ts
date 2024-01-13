@@ -127,8 +127,8 @@ export class EventsController {
   //Params        : id - is required
 
   @Get("getEvent")
-  getEvent(@Query("Id") Id:string):Promise<Event>{
-    return this.eventsService.findEvent(Id)
+  getEvent(@Query("movieId") movieId:string):Promise<Event>{
+    return this.eventsService.findEvent(movieId)
   }
 
 

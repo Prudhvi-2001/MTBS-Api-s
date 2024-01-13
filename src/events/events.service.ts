@@ -18,6 +18,7 @@ export class EventsService {
   async create(event:EventDto,createBy:string): Promise<Object> {
     const existingEvent = await this.eventModel.findOne({ name:event.name }).exec();
     if(!event.availableSeats){ throw new NotFoundException("Can't find seats"); } 
+    if(event.availableSeats.length === 0) { throw new NotFoundException("Seats Can't be empty"); } 
     if (existingEvent) {
       throw new ForbiddenException("Event is already exist")
     }
