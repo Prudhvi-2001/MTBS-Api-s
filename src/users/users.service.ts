@@ -40,7 +40,7 @@ export class UsersService {
   async login(username:string,password:string):Promise<any>{
       const user = await this.userModel.findOne({username}).exec()
       if (!user || !await bcrypt.compare(password, user.password)) {
-        throw new UnauthorizedException('Please check your email and password')
+        throw new UnauthorizedException('Please check your username and password')
         }
       const hexId = user._id.toHexString()
       const payload = { sub: hexId, username: user.username };
