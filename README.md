@@ -66,6 +66,7 @@ $ npm run start:prod
   "message":"User has been Registered Successfully",
   "status":201
 }
+
 ```
 
 <p> Note - Validators are used in user schema make sure to provide valid username, password and email. </p>
@@ -91,10 +92,10 @@ $ npm run start:prod
     border-radius: 8px;
     transition: transform 0.3s ease-in-out;
   "
- />
-
+  />
 
 </ul>
+
 
 
 <ul>
@@ -104,13 +105,12 @@ $ npm run start:prod
 <li>Method: POST</li>
 <li> Request Body :</li>
 
-
-
 ```bash
 {
   "username":"username",
   "password":"password"
 }
+
 ```
 
 <img
@@ -140,6 +140,7 @@ $ npm run start:prod
   "token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NWExMWUwMTQ2YjhlNzdiYjM4MWNkYTUiLCJ1c2VybmFtZSI6IkV4YW1wbGUiLCJpYXQiOjE3MDUxMzIzMTUsImV4cCI6MTcwNTEzNTkxNX0.zkKolr8vcRxrxHm8dRAxCdWAkIbezhHx_ok45hoMIBI",
   "status":201
 }
+
 ```
 
 </ul>
