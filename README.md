@@ -43,8 +43,9 @@ $ npm run start:prod
 
 <h3>API Routes</h3>
 <h4>1. Users</h4>
-<p>1.1 Register a User</p>
 <ul>
+<p>1.1 Register a User</p>
+
 <li>Endpoint : /users/createUser</li>
 <li>Method: POST</li>
 <li>Body :</li>
@@ -81,10 +82,12 @@ $ npm run start:prod
     transition: transform 0.3s ease-in-out;
   "
  />
+</ul>
 
 
-<p>1.2 Login</p>
 <ul>
+<p>1.2 Login</p>
+
 <li>Endpoint : /users/login</li>
 <li>Method: POST</li>
 <li> Request Body :</li>
@@ -134,8 +137,13 @@ $ npm run start:prod
   "status":201
 }
 ```
-<p>1.3 Get Profile</p>
+
+</ul>
+
+
 <ul>
+<p>1.3 Get Profile</p>
+
 <li>Endpoint : /users/getUser?id={Id of User}</li>
 <li>Method: GET</li>
 <p>Note : Id should be passed as Params</p>
@@ -152,9 +160,11 @@ $ npm run start:prod
   "
  />
 
+</ul>
 
-<p>1.4 Update Profile</p>
 <ul>
+<p>1.4 Update Profile</p>
+
 <li>Endpoint : /users/updateUser?id={Id of user}</li>
 <li>Method: PUT</li>
 <p>Note : Id should be passed as Params</p>
@@ -172,10 +182,11 @@ $ npm run start:prod
     transition: transform 0.3s ease-in-out;
   "
  />
+</ul>
 
-
-<p>1.5 Delete Profile</p>
 <ul>
+<p>1.5 Delete Profile</p>
+
 <li>Endpoint : /users/deleteUser?id={Id of user}</li>
 <li>Method: DELETE</li>
 <p>Note : Id should be passed as Params</p>
@@ -198,8 +209,10 @@ $ npm run start:prod
     transition: transform 0.3s ease-in-out;
   "
  />
- 
- <h4>2. Event Module</h4>
+ </ul>
+
+<h4>2. Event Module</h4>
+
 <h5>2.1 Register a Movie</h5>
 <ul>
 <li>Endpoint : /events/createEvent</li>
@@ -304,10 +317,7 @@ $ npm run start:prod
     transition: transform 0.3s ease-in-out;
   "
  />
-
-
-
- 
+ </ul>
  </ul>
 
  <h5>2.2 Listing available seats for particular Movie</h5>
@@ -336,7 +346,9 @@ $ npm run start:prod
 
 
 ```
-<h5>2.2 Listing a particular Movie</h5>
+</ul>
+
+<h5>2.3 Listing a particular Movie</h5>
 <ul>
 <li>Endpoint : /events/getEvent?movieId={Id of specific movie}</li>
 <li>Method: GET</li>
@@ -380,6 +392,7 @@ $ npm run start:prod
 
 ```
 
+</ul>
 
 <h5>2.4 Reserving a seats for particular Movie</h5>
 <ul>
@@ -425,7 +438,11 @@ $ npm run start:prod
     "message": "Seats 11, 12, 13, 14, 15 are not available",
     "error": "Bad Request",
     "statusCode": 400
-} ```
+}
+ ```
+
+
+
 
  <img
   src="readme-Img\2.9.jpg"
@@ -472,9 +489,9 @@ $ npm run start:prod
  />
 
 </ul>
+</ul>
 
-
-<h5>2.4 Confirming seats for particular Movie</h5>
+<h5>2.5 Confirming seats for particular Movie</h5>
 <ul>
 <li>Endpoint : /events/confirm-seats?movieId={Id of specific movie}</li>
 <li>Method: POST</li>
@@ -511,11 +528,5 @@ $ npm run start:prod
     transition: transform 0.3s ease-in-out;
   "
  />
-
-
 </ul>
-
-
-
-
 </ul>
