@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Req,Patch, Param,Put, Delete ,Request, UseGuards, UsePipes, ValidationPipe, HttpStatus} from '@nestjs/common';
+import { Controller, Get, Query,Post, Body, Req,Patch, Param,Put, Delete ,Request, UseGuards, UsePipes, ValidationPipe, HttpStatus} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AuthGuard } from './guards/user.guard';
@@ -47,16 +47,16 @@ export class UsersController {
 
   //To get the specific user
 //  ApiEndpoint: http://localhost:3000/users/:id
-  @Get(':id')
-  async getUser(@Param("id") id:string):Promise<User>{
+  @Get('getUser')
+  async getUser(@Query("id") id:string):Promise<User>{
     return this.usersService.getUser(id);
   }
   //To delete User 
   //ApiEndPoint: http://localhost:3000/users/deleterUser/:id
   //Method:DELETE
 
-  @Get("deleteUser/:id")
-  async deleteUser(@Param('id') id:string):Promise<Object>{
+  @Delete("deleteUser")
+  async deleteUser(@Query('id') id:string):Promise<Object>{
     this.usersService.deleteUser(id)
     return {
       message:"User has Deleted!!",

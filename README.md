@@ -80,15 +80,14 @@ $ npm run start:prod
     border-radius: 8px;
     transition: transform 0.3s ease-in-out;
   "
- 
-/>
+ />
 
 
 <p>1.2 Login</p>
 <ul>
 <li>Endpoint : /users/login</li>
 <li>Method: POST</li>
-<li>Body :</li>
+<li> Request Body :</li>
 
 
 
@@ -96,6 +95,14 @@ $ npm run start:prod
 {
   "username":"username",
   "password":"password"
+}
+```
+<li>Response</li>
+
+```bash
+{
+  "message":"User has been Registered Successfully",
+  "status":201
 }
 ```
 
@@ -108,8 +115,7 @@ $ npm run start:prod
     border-radius: 8px;
     transition: transform 0.3s ease-in-out;
   "
-  
-/>
+  />
 
 <img
   src="readme-Img\1.4.jpg"
@@ -120,15 +126,80 @@ $ npm run start:prod
     border-radius: 8px;
     transition: transform 0.3s ease-in-out;
   "
-/>
+ />
+
+```bash
+{
+  "token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NWExMWUwMTQ2YjhlNzdiYjM4MWNkYTUiLCJ1c2VybmFtZSI6IkV4YW1wbGUiLCJpYXQiOjE3MDUxMzIzMTUsImV4cCI6MTcwNTEzNTkxNX0.zkKolr8vcRxrxHm8dRAxCdWAkIbezhHx_ok45hoMIBI",
+  "satus":201
+}
+```
 <p>1.3 Get Profile</p>
 <ul>
-<li>Endpoint : /users/:id</li>
+<li>Endpoint : /users/getUser?id={Id of User}</li>
 <li>Method: GET</li>
+<p>Note : Id should be passed as Params</p>
+
+
+<img
+  src="readme-Img\1.5.jpg"
+  width="80%"
+  height="80%"
+  style="
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out;
+  "
+ />
+
+
+<p>1.4 Update Profile</p>
+<ul>
+<li>Endpoint : /users/updateUser?id={Id of user}</li>
+<li>Method: PUT</li>
 <p>Note : Id should be passed as Params</p>
 
 
 
 
+<img
+  src="readme-Img\1.6.jpg"
+  width="80%"
+  height="80%"
+  style="
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out;
+  "
+ />
+
+
+<p>1.5 Delete Profile</p>
+<ul>
+<li>Endpoint : /users/deleteUser?id={Id of user}</li>
+<li>Method: DELETE</li>
+<p>Note : Id should be passed as Params</p>
+
+
+
+
+<img
+  src="readme-Img\1.7.jpg"
+  width="80%"
+  height="80%"
+  style="
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out;
+  "
+ />
+ 
+ 
+```bash
+{
+
+    "message": "User has Deleted!!"
+}
+```
 
 </ul>
