@@ -2,6 +2,26 @@
 <h1>Movie Ticket Booking System</h1>
 <p>The Movie ticket Booking System is a web application inspired by services like BookMyShow, designed to facilitate the seam booking of movie tickets.In this application Backend Api's have been implemented for users to discover movies, select preferred seats and confirm the booking. Those Api's were built by using NestJs Framework.</p>
 
+## Requirements
+
+Before you start, ensure you have met the following requirements:
+
+- **Node.js**: Install Node.js from [nodejs.org](https://nodejs.org/).
+- **npm**: Node Package Manager is included with Node.js. You can check its version using `npm -v`.
+- **MongoDB**: Install MongoDB from [mongodb.com](https://www.mongodb.com/try/download/community).
+
+## If you have docker installed
+
+<p>Clone or pull the repository</p>
+<p>Execute following command</p>
+
+```bash
+docker-compose up -d --build
+
+docker run -p 3000:3000  mtbs-api-s-nestjs-app
+
+```
+
 ## How to Get Started ?
 <p>1. Clone the Repositry.</p>
 <p>2. Install dependencies.</p>
