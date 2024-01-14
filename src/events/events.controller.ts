@@ -20,6 +20,7 @@ import { EventsService } from './events.service';
 import { Event, EventDto, UpdateEventDto } from './schemas/event.schema';
 import { AuthGuard } from './guards/jwt-auth.guard';
 import { AdminGuard } from '../admin/guards/admin.guard';
+import { monitorEventLoopDelay } from 'perf_hooks';
 @Controller('events')
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
@@ -155,6 +156,16 @@ export class EventsController {
   @Delete("deleteEvent")
   async deleteEvent(@Param("movieId") eventId:string):Promise<Object>{
     return this.eventsService.deleteEvent(eventId)
+  }
+
+
+  //To cancel the unconfirmed bookings by admin
+  @SetMetadata("isAdmin",true)
+  @UseGuards(AdminGuard)
+  @Post('cancel-booking')
+  async cancelUnconfirmedAdmin(@Req() req, @Query("movieId") movieId:string, username:string):Promise<Object>{
+   const userName = req.user.username
+   return this.eventsService.cancelBookingByAdmin(movieId ,userName);
   }
 
 }

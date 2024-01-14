@@ -196,5 +196,33 @@ export class EventsService {
 
 
   }
+  //To cancel the booking for specific event by admin
+  async cancelBookingByAdmin(eventId: string, adminName: string): Promise<Object>{
+    const canceledSeats: number[] = [];
+    const event = await this.eventModel.findById(eventId).exec()
+    if(!event) throw new BadRequestException("OOps Can't find the event")
+    event.bookings = event.bookings.filter(
+      (booking) => {
+        const isConfirmed = booking.confirmed;
+        const within10Minute = booking.createdAt > new Date(Date.now() - 10 * 60 * 1000);
+
+        if (!isConfirmed && ! within10Minute) {
+          // Booking is not confirmed and older than 10 minutes
+          canceledSeats.push(...booking.seats);
+          return false; // Remove that particular booking
+        }
+       
+        return true; // Keep the booking
+      },
+    );
+    event.availableSeats =[...event.availableSeats ,...canceledSeats]
+    await event.save();
+    return {
+      unconfirmedBy:adminName,
+      message: 'Unconfirmed bookings canceled successfully.',
+      status: HttpStatus.OK,
+    };
+
+  }
   
 }
