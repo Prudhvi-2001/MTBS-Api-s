@@ -76,7 +76,7 @@ export class EventsController {
 //params       : eventId - is required
 //req.headers.authorization :token(must be there to book the seats)
 //req.body={ "seats":[12,13,14]}
-
+  @UsePipes(ValidationPipe)
   @UseGuards(AuthGuard)
   @Post('book-seats')
   async bookSeats(
@@ -109,9 +109,9 @@ export class EventsController {
   @Post('confirm-booking')
   async confirmBooking(@Query('movieId') eventId: string, @Req() req): Promise<Object> {
     const userId = req.user.sub;
-     
+    const username = req.user.username
     try {
-      return await  this.eventsService.confirmBooking(eventId, userId);
+      return await  this.eventsService.confirmBooking(eventId, userId,username);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new NotFoundException(error.message);

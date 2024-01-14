@@ -5,7 +5,6 @@ import { Model, Types } from 'mongoose';
 import { Booking, Event, EventDto, UpdateEventDto } from './schemas/event.schema';
 import { UsersService } from '../users/users.service';
 import { selectedDto } from './dto/selected.dto';
-import { User } from 'src/users/schemas/user.schema';
 import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
@@ -27,12 +26,12 @@ export class EventsService {
       throw new BadRequestException("Duplicate seats found. Please provide valid seat numbers.");
     }
     const newEvent = new this.eventModel(event)
-    newEvent.save()
+    const eventNew = newEvent.save()
     return {
       message:"Event has been registered",
-      statusCode:HttpStatus.CREATED,
+      Event:{eventNew},
       createdBy:createBy,
-      createdAt: new Date().toDateString()
+      CreatedTime: new Date(),
     }
   }
   async findAll(): Promise<Event[]> {
@@ -50,9 +49,13 @@ export class EventsService {
     const availableSeats = event.availableSeats.filter((seat) => !bookedSeats.includes(seat));
 
     return {
-      seatsAvailable:availableSeats,
-      status:HttpStatus.OK
-    };
+      availableSeats: {
+      event: event.name,
+      seats:{
+        available:[availableSeats]
+      }
+    }
+  }
   }
 //To book the seats
   async bookSeats(eventId: string, userId: string, seats: number[]): Promise<Object> {
@@ -104,13 +107,19 @@ export class EventsService {
     await event.save();
 
     return {
-      msg:`${user.username} , You have reserved seats  ${seats.join(', ')} ! Please confirm.`,
-      status:HttpStatus.ACCEPTED
+      message: 'Please Confirm the booking!',
+      bookingDetails: {
+      user: user.username,
+      event: event.name,
+      seats:seats.join(', '),
+      BookingConfirmation: false,
+      
     }
+  }
   }
 
  //To confirm the ticket
-  async confirmBooking(eventId: string, userId: string): Promise<Object> {
+  async confirmBooking(eventId: string, userId: string,username:string): Promise<Object> {
     const event = await this.eventModel.findById(eventId).exec();
 
     if (!event) {
@@ -133,11 +142,17 @@ export class EventsService {
     const confirmedSeats = booking.seats.join(', ');
    
     return {
-      message:`Hurray !! , Booking confirmed! Seats booked: ${confirmedSeats}`,
-      bookingConfirmation:booking.confirmed,
-      status:HttpStatus.NO_CONTENT
-    };
-    
+      message: 'Booking confirmed successfully!',
+      bookingDetails: {
+      user: username,
+      event: event.name,
+      seats:confirmedSeats,
+      confirmationTime: new Date(),
+
+    }
+  }
+   
+  
   }
 
 //To cancel the unconfirmed tickets

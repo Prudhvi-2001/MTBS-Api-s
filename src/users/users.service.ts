@@ -49,7 +49,6 @@ export class UsersService {
           statusCode:HttpStatus.CREATED,
         };
 }
-  
 //To get the specific User
   getUser(id:string){
     return  this.userModel.findById(id);

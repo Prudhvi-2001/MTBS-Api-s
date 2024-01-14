@@ -8,3 +8,4 @@ export const databaseUrl = {
 export const isAdmin={
     isAdmin:"isAdmin"
 }
+
