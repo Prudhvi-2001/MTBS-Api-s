@@ -1,4 +1,4 @@
-import { ForbiddenException, HttpException, HttpStatus, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, HttpException, HttpStatus, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { updateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -84,7 +84,9 @@ async updateBookings(id: string, seats: number[] ,movieName:string,showTime: Dat
 
     async getUserBookings(userId: string): Promise<any[]> {
         const user = await this.userModel.findById(userId).exec();
-
+        if(!user.bookings || user.bookings.length ===0){
+          throw new BadRequestException("No bookings found for this user")
+        }
         if (!user) {
           throw new NotFoundException('User not found');
         }

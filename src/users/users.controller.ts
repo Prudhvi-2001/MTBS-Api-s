@@ -79,3 +79,7 @@ export class UsersController {
     return this.usersService.getUserBookings(id);
   }
 }
+
+
+//Addtional things need to added - > 1. If any user cancel the bookings it should be reflected in avaible seats
+// 2. While booking the tickets if the event show is behind we should not allow user to book
