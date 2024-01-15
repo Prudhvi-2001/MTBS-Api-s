@@ -16,9 +16,9 @@ Before you start, ensure you have met the following requirements:
 <p>Execute following command</p>
 
 ```bash
-docker-compose up -d --build
+docker build .
 
-docker run -p 3000:3000  mtbs-api-s-nestjs-app
+docker-compose up
 
 ```
 
