@@ -60,5 +60,35 @@ export class UsersService {
   //To Update the User
   async updateUser(id:string, updateUserDto:updateUserDto):Promise<Object>{
   return this.userModel.findByIdAndUpdate(id,updateUserDto)
+  
 }
-}
+
+async updateBookings(id: string, seats: number[] ,movieName:string,showTime: Date ): Promise<void> {
+        const user = await this.userModel.findById(id).exec();
+
+        if (!user) {
+          throw new NotFoundException('User not found');
+        }
+
+        user.bookings = [
+          ...user.bookings,
+          {
+            movieName: movieName,
+            seatsBooked:seats,
+            showTime: showTime,
+            
+          },
+        ];
+        await user.save();
+      }
+
+    async getUserBookings(userId: string): Promise<any[]> {
+        const user = await this.userModel.findById(userId).exec();
+
+        if (!user) {
+          throw new NotFoundException('User not found');
+        }
+        return user.bookings || [];
+      }
+      }
+

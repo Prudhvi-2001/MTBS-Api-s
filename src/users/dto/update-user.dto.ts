@@ -19,3 +19,7 @@ export class updateUserDto {
       @MaxLength(12,{message:"Should not be more than 12 characters"})
     password:string;
 }
+
+export class updateUserBooing extends updateUserDto{
+  bookings:number[]
+}

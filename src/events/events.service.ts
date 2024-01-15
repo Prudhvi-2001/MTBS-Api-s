@@ -11,25 +11,30 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 export class EventsService {
   constructor(
     @InjectModel(Event.name) private readonly eventModel: Model<Event>,
-    private readonly usersService: UsersService,
+    private  usersService: UsersService,
   ) {}
   //To create the specific event with avialbe seats and Bookings available
   async create(event:EventDto,createBy:string): Promise<Object> {
     const existingEvent = await this.eventModel.findOne({ name:event.name }).exec();
     if(!event.availableSeats){ throw new NotFoundException("Can't find seats"); } 
+    for (const seat of event.availableSeats) {
+      if (seat > 100) {
+        throw new BadRequestException('Seat number cannot exceed 100 !! cause you have capacity of 100');
+      }
+    }
     if(event.availableSeats.length === 0) { throw new NotFoundException("Seats Can't be empty"); } 
     if (existingEvent) {
       throw new ForbiddenException("Event is already exist")
     }
     const hasDuplicateSets = new Set(event.availableSeats).size !== event.availableSeats.length
     if(hasDuplicateSets){
-      throw new BadRequestException("Duplicate seats found. Please provide valid seat numbers.");
+      throw new BadRequestException("Seat numbers repeated. Please provide valid seat numbers.");
     }
     const newEvent = new this.eventModel(event)
     const eventNew = newEvent.save()
     return {
       message:"Event has been registered",
-      Event:{eventNew},
+      Event:newEvent,
       createdBy:createBy,
       CreatedTime: new Date(),
     }
@@ -62,7 +67,7 @@ export class EventsService {
     const event = await this.eventModel.findById(eventId).exec();
     const hasDuplicates = new Set(seats).size !== seats.length;
     if (hasDuplicates) {
-      throw new BadRequestException("Duplicate seat numbers are not allowed");
+      throw new BadRequestException("Repeated seat numbers aren't allowed to book");
     }
     if(seats.length === 0) {throw new BadRequestException("Please mention seats!");}
     console.log(seats.length);
@@ -117,7 +122,7 @@ export class EventsService {
     }
   }
   }
-
+  
  //To confirm the ticket
   async confirmBooking(eventId: string, userId: string,username:string): Promise<Object> {
     const event = await this.eventModel.findById(eventId).exec();
@@ -140,15 +145,16 @@ export class EventsService {
     await event.save(); //bookings will be updated in events
 
     const confirmedSeats = booking.seats.join(', ');
-   
+    this.usersService.updateBookings(userId,booking.seats,event.name, event.date);
+    console.log(booking.seats);
     return {
       message: 'Booking confirmed successfully!',
       bookingDetails: {
       user: username,
       event: event.name,
+      showTime:event.date,
       seats:confirmedSeats,
       confirmationTime: new Date(),
-
     }
   }
    

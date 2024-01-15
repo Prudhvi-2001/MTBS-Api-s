@@ -167,6 +167,7 @@ export class EventsController {
    const userName = req.user.username
    return this.eventsService.cancelBookingByAdmin(movieId ,userName);
   }
+  
 
 }
 

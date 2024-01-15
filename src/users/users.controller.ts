@@ -71,4 +71,11 @@ export class UsersController {
     const userId = req.user.sub
     return this.usersService.updateUser(userId, updateUserDto);
   }
+
+  @UseGuards(AuthGuard)
+  @Get('getBookings')
+  async getBooking(@Req() req):Promise<any[]>{
+    const id = req.user.sub
+    return this.usersService.getUserBookings(id);
+  }
 }

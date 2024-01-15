@@ -31,13 +31,9 @@ import {
       }
       return true;
     }
-  
     private extractTokenFromHeader(request: Request): string | undefined {
-      const authorizationHeader = request.headers.authorization;
-  
-      
+      const authorizationHeader = request.headers.authorization;      
       if (authorizationHeader) {
-        // Assuming the token is in the "Authorization" header with a format like "Bearer <token>"
         const token = authorizationHeader
         return token;
       }
