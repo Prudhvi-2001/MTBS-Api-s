@@ -6,6 +6,7 @@ import { Booking, Event, EventDto, UpdateEventDto } from './schemas/event.schema
 import { UsersService } from '../users/users.service';
 import { selectedDto } from './dto/selected.dto';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { CLIENT_RENEG_LIMIT } from 'tls';
 
 @Injectable()
 export class EventsService {
@@ -230,6 +231,7 @@ export class EventsService {
         const isConfirmed = booking.confirmed;
         const within10Minute = booking.createdAt > new Date(Date.now() - 10 * 60 * 1000);
 
+        
         if (!isConfirmed && ! within10Minute) {
           // Booking is not confirmed and older than 10 minutes
           canceledSeats.push(...booking.seats);
@@ -247,6 +249,27 @@ export class EventsService {
       status: HttpStatus.OK,
     };
 
+  }
+
+  async getSpecificEvent(id:string):Promise<any>{
+    return this.eventModel.findById(id)
+    
+  }
+  async updateAvailableSeats(eventId: string, cancelledSeats: number[]): Promise<void> {
+    const event = await this.eventModel.findById(eventId);
+
+    if (!event) {
+      throw new NotFoundException(`Event with ID ${eventId} not found`);
+    }
+
+    // Ensure that the cancelled seats are unique
+    const uniqueCancelledSeats = [...new Set(cancelledSeats)];
+
+    // Update available seats by removing cancelled seats
+    event.availableSeats = [...event.availableSeats, ...uniqueCancelledSeats];
+
+    // Save the updated event
+    await event.save();
   }
   
 }

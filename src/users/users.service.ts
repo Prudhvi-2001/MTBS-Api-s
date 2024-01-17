@@ -8,6 +8,7 @@ import {User} from "./schemas/user.schema"
 import * as bcrypt from 'bcryptjs';
 import { EventsService } from 'src/events/events.service';
 import { Mode } from 'fs';
+import { CLIENT_RENEG_LIMIT } from 'tls';
 
 @Injectable()
 export class UsersService {
@@ -95,20 +96,38 @@ async updateBookings(id: string, seats: number[] ,movieName:string,showTime: Dat
         if (!user) {
           throw new NotFoundException('User not found');
         }
-        for (let i=0 ; i<user.bookings.length ;i++){
-          console.log(user.bookings[i].seatsBooked);
-        }
+        
         return user.bookings || [];
       }
-      async cancelBooking(id:string ,eventId:string){
-        const user = this.userModel.findById(id)
-        const event = await this.eventsService.findEvent(id)
-        console.log(event);
-        const bookings = (await user).bookings[2].movieId
-        // const event = this.eventService.findEvent(id)
-        console.log(bookings);
-
+      async cancelBooking(id: string, movieId: string): Promise<any> {
+        const user = await this.userModel.findById(id);
+        const event = await this.eventsService.getSpecificEvent;
+      
+        if (!event) {
+          throw new BadRequestException("Event not found");
+        }
+      
+        const bookingIndex = user.bookings.findIndex((booking) => booking.movieId === movieId);
+      
+        if (bookingIndex !== -1) {
+          const cancelledSeats = user.bookings[bookingIndex].seatsBooked;
+      
+          user.bookings.splice(bookingIndex, 1);
+      
+          await this.eventsService.updateAvailableSeats(movieId, cancelledSeats);
+      
+          await user.save();
+      
+          return {
+            success: true,
+            message: "Booking canceled successfully",
+          };
+        } else {
+          throw new BadRequestException("No bookings found for the specified movie");
+        }
       }
+      
     
     }
+  
 

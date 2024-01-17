@@ -4,6 +4,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { AuthGuard } from './guards/user.guard';
 import { updateUserDto } from './dto/update-user.dto';
 import {User} from "./schemas/user.schema"
+import { promises } from 'dns';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -82,9 +83,9 @@ export class UsersController {
   }
   @UseGuards(AuthGuard)
   @Get('cancelBookings')
-  async cancelBookings(@Req() req , @Query("movieId") movieId:string){
+  async cancelBookings(@Req() req , @Query("movieId") movieId:string):Promise<any>{
     const userId = req.user.sub
-    return this.usersService.cancelBooking(userId ,movieId);
+    return this.usersService.cancelBooking(userId,movieId);
   }
   
 }
