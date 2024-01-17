@@ -235,12 +235,7 @@ $ npm run start:prod
   "
  />
  </ul>
-
-<h4>2. Event Module</h4>
-
-<h5>2.1 Register a Movie</h5>
-<ul>
-<li>Endpoint : /events/createEvent</li>
+x
 <li>Method: POST</li>
 <li>Headers: Token(Admin)</li>
 <li>Body :</li>

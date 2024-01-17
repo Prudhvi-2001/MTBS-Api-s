@@ -10,6 +10,7 @@ import {databaseUrl} from './users/constants/constants'
 import { AdminService } from './admin/admin.service';
 import { AdminController } from './admin/admin.controller';
 import { AdminModule } from './admin/admin.module';
+
 @Module({
   imports: [
      MongooseModule.forRoot(databaseUrl.URL),

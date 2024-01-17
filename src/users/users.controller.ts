@@ -1,4 +1,4 @@
-import { Controller, Get, Query,Post, Body, Req,Patch, Param,Put, Delete ,Request, UseGuards, UsePipes, ValidationPipe, HttpStatus} from '@nestjs/common';
+import { Controller, Get, Query,Post, Body, Req,Patch, Param,Put, Delete ,Request, UseGuards, UsePipes, ValidationPipe, HttpStatus, HttpCode} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AuthGuard } from './guards/user.guard';
@@ -54,20 +54,22 @@ export class UsersController {
   //To delete User 
   //ApiEndPoint: http://localhost:3000/users/deleterUser/:id
   //Method:DELETE
-
+  @UseGuards(AuthGuard)
   @Delete("deleteUser")
-  async deleteUser(@Query('id') id:string):Promise<Object>{
+  async deleteUser(@Req() req):Promise<Object>{
+    const id =req.user.sub
     this.usersService.deleteUser(id)
     return {
       message:"User has Deleted!!",
     }
+    
   }
 //To update the User
 //ApiEndPoint:http://localhost:3000/users/:id/updateUser
 //Method:PUT
   @UseGuards(AuthGuard)
   @Put('updateUser')
-  async updateProfile(@Req() req, @Body() updateUserDto: updateUserDto) {
+  async updateProfile(@Req() req, @Body() updateUserDto: updateUserDto):Promise<User> {
     const userId = req.user.sub
     return this.usersService.updateUser(userId, updateUserDto);
   }
@@ -78,6 +80,13 @@ export class UsersController {
     const id = req.user.sub
     return this.usersService.getUserBookings(id);
   }
+  @UseGuards(AuthGuard)
+  @Get('cancelBookings')
+  async cancelBookings(@Req() req , @Query("movieId") movieId:string){
+    const userId = req.user.sub
+    return this.usersService.cancelBooking(userId ,movieId);
+  }
+  
 }
 
 

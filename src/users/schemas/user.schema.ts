@@ -15,8 +15,8 @@ export class User {
   @Prop({ required: true })
   password: string;
   @Optional()
-  @Prop({ type: [{ movieName: String, seatsBooked: [Number], showTime: Date }] })
-  bookings: Array<{ movieName: string; seatsBooked: number[]; showTime: Date ,}>;
+  @Prop({ type: [{ movieName: String, seatsBooked: [Number], showTime: Date,movieId:String }] })
+  bookings: Array<{ movieName: string; seatsBooked: number[]; showTime: Date ,movieId:string}>;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

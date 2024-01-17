@@ -1,5 +1,5 @@
 // events/events.service.ts
-import { Injectable, NotFoundException, BadRequestException, ForbiddenException, HttpStatus, HttpCode } from '@nestjs/common';
+import { Injectable,Inject, NotFoundException, forwardRef,BadRequestException, ForbiddenException, HttpStatus, HttpCode } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Booking, Event, EventDto, UpdateEventDto } from './schemas/event.schema';
@@ -11,7 +11,7 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 export class EventsService {
   constructor(
     @InjectModel(Event.name) private readonly eventModel: Model<Event>,
-    private  usersService: UsersService,
+    @Inject(forwardRef(() => UsersService)) private readonly usersService: UsersService,
   ) {}
   //To create the specific event with avialbe seats and Bookings available
   async create(event:EventDto,createBy:string): Promise<Object> {
@@ -145,7 +145,7 @@ export class EventsService {
     await event.save(); //bookings will be updated in events
 
     const confirmedSeats = booking.seats.join(', ');
-    this.usersService.updateBookings(userId,booking.seats,event.name, event.date);
+    this.usersService.updateBookings(userId,booking.seats,event.name, event.date, eventId);
     console.log(booking.seats);
     return {
       message: 'Booking confirmed successfully!',
@@ -194,9 +194,12 @@ export class EventsService {
     }
   }
   //To find the event by id 
+
   async findEvent(id:string):Promise<Event>{
     return this.eventModel.findById(id)
   }
+
+
   //To update the event
   async updateEvent(eventId:string, updatedEventDto:UpdateEventDto):Promise<Object>{
     await this.eventModel.findByIdAndUpdate(eventId,updatedEventDto)

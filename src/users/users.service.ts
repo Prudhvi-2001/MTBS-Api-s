@@ -6,12 +6,16 @@ import { Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
 import {User} from "./schemas/user.schema"
 import * as bcrypt from 'bcryptjs';
+import { EventsService } from 'src/events/events.service';
+import { Mode } from 'fs';
 
 @Injectable()
 export class UsersService {
+  
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
-    private jwtService:JwtService
+    private jwtService: JwtService,
+    private eventsService: EventsService, 
   ) {}
   //To Create the User
 
@@ -37,7 +41,7 @@ export class UsersService {
   
   }
 //To login the User and it will generate a token
-  async login(username:string,password:string):Promise<any>{
+  async login(username:string,password:string):Promise<Object>{
       const user = await this.userModel.findOne({username}).exec()
       if (!user || !await bcrypt.compare(password, user.password)) {
         throw new UnauthorizedException('Please check your username and password')
@@ -58,25 +62,25 @@ export class UsersService {
     return this.userModel.findByIdAndDelete(id)
   }
   //To Update the User
-  async updateUser(id:string, updateUserDto:updateUserDto):Promise<Object>{
+  async updateUser(id:string, updateUserDto:updateUserDto):Promise<User>{
   return this.userModel.findByIdAndUpdate(id,updateUserDto)
   
 }
 
-async updateBookings(id: string, seats: number[] ,movieName:string,showTime: Date ): Promise<void> {
+async updateBookings(id: string, seats: number[] ,movieName:string,showTime: Date,eventId:string ): Promise<void> {
         const user = await this.userModel.findById(id).exec();
 
         if (!user) {
           throw new NotFoundException('User not found');
         }
-
+      
         user.bookings = [
           ...user.bookings,
           {
             movieName: movieName,
             seatsBooked:seats,
-            showTime: showTime,
-            
+            showTime: showTime, 
+            movieId:eventId
           },
         ];
         await user.save();
@@ -86,11 +90,25 @@ async updateBookings(id: string, seats: number[] ,movieName:string,showTime: Dat
         const user = await this.userModel.findById(userId).exec();
         if(!user.bookings || user.bookings.length ===0){
           throw new BadRequestException("No bookings found for this user")
+
         }
         if (!user) {
           throw new NotFoundException('User not found');
         }
+        for (let i=0 ; i<user.bookings.length ;i++){
+          console.log(user.bookings[i].seatsBooked);
+        }
         return user.bookings || [];
       }
+      async cancelBooking(id:string ,eventId:string){
+        const user = this.userModel.findById(id)
+        const event = await this.eventsService.findEvent(id)
+        console.log(event);
+        const bookings = (await user).bookings[2].movieId
+        // const event = this.eventService.findEvent(id)
+        console.log(bookings);
+
       }
+    
+    }
 
