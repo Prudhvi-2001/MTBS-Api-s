@@ -25,7 +25,7 @@ docker-compose up
 ## Pull the image from DockerHub
 
 ```bash 
-docker run prudhvi2001/nestjs:latest
+docker run -p 3000:3000 prudhvi2001/nestjs:latest
 
 ```
 
