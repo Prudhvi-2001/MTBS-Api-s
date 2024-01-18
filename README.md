@@ -22,6 +22,13 @@ docker-compose up
 
 ```
 
+## Pull the image from DockerHub
+
+```bash 
+docker run prudhvi2001/nestjs:latest
+
+```
+
 ## How to Get Started ?
 <p>1. Clone the Repositry.</p>
 <p>2. Install dependencies.</p>
