@@ -796,7 +796,7 @@ http://localhost:3000/events/deleteEvent?movieId=65a2502676c6c5720eacf3c1
  <p>If we tries to update the deleted user</p>
 
  <img
-  src="readme-Img\3.8.jpg"
+  src="readme-Img\3.9.jpg"
   width="80%"
   height="80%"
   style="
