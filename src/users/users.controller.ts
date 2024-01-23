@@ -114,8 +114,9 @@ export class UsersController {
   @Put('updateUser')
   async updateProfile(@Req() req, @Body() updateUserDto: updateUserDto):Promise<User> {
     try{
-      const userId = req.user.sub
-    return this.usersService.updateUser(userId, updateUserDto);
+    const userName= req.user.username
+    console.log(userName);
+    return this.usersService.updateUser(userName, updateUserDto);
 
     }
     

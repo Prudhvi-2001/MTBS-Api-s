@@ -92,14 +92,31 @@ export class UsersService {
     }
   }
 
-  // To Update the User
-  async updateUser(id: string, updateUserDto: updateUserDto): Promise<User> {
+  async updateUser(username: string, updateDto:updateUserDto): Promise<User> {
     try {
-      return await this.userModel.findByIdAndUpdate(id, updateUserDto);
+        
+        if (updateDto.username) {
+            // Throw an exception if the user attempts to update the username
+            throw new HttpException('Updating username is not allowed', HttpStatus.BAD_REQUEST);
+        }
+
+        const user = await this.userModel.findOne({ username }).exec();
+
+        if (!user) {
+            throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+        }
+
+        // Update user properties here
+        user.email = updateDto.email || user.email;
+        user.password = updateDto.password || user.password;
+
+        // Save the updated user
+        return await user.save();
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+        throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-  }
+}
+
 
   async updateBookings(
     id: string,
