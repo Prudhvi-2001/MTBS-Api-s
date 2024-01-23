@@ -31,7 +31,7 @@ export class EventsService {
   ) {}
 
   // To create the specific event with available seats and Bookings available
-  async create(event: EventDto, createBy: string): Promise<Object | null> {
+  create = async (event: EventDto, createBy: string): Promise<Object | null> =>{
     try {
       
       if(event.name === ""){
@@ -77,7 +77,7 @@ export class EventsService {
     }
   }
 
-  async findAll(): Promise<Event[]> {
+  findAll = async(): Promise<Event[]> =>{
     try {
       return this.eventModel.find().exec();
     } catch (error) {
@@ -86,7 +86,7 @@ export class EventsService {
   }
 
   // To find the available seats for booking
-  async findAvailableSeats(eventId: string): Promise<Object> {
+  findAvailableSeats = async (eventId: string): Promise<Object> =>{
     try {
       const event = await this.eventModel.findById(eventId).exec();
 
@@ -113,7 +113,7 @@ export class EventsService {
   }
 
   // To book the seats
-  async bookSeats(eventId: string, userId: string, seats: number[]): Promise<Object> {
+  bookSeats = async (eventId: string, userId: string, seats: number[]): Promise<Object> =>{
     try {
         // Check if seats are null
         if (!seats || seats.length === 0) {
@@ -200,11 +200,11 @@ export class EventsService {
 
 
   // To confirm the ticket
-  async confirmBooking(
+  confirmBooking = async (
     eventId: string,
     userId: string,
     username: string,
-  ): Promise<Object> {
+  ): Promise<Object> => {
     try {
       const event = await this.eventModel.findById(eventId).exec();
 
@@ -256,40 +256,49 @@ export class EventsService {
   async cancelUnconfirmedBookings(): Promise<void> {
     try {
       const events = await this.eventModel.find().exec();
+  
       for (const event of events) {
         const originalAvailableSeats = event.availableSeats.slice(); // copy of availableSeats
-
         const canceledSeats: number[] = [];
-
+  
         event.bookings = event.bookings.filter((booking) => {
           const isConfirmed = booking.confirmed;
           const within10Minute =
             booking.createdAt > new Date(Date.now() - 1 * 60 * 1000);
-
+  
           if (!isConfirmed && !within10Minute) {
             // Booking is not confirmed and older than 10 minutes
             canceledSeats.push(...booking.seats);
             return false; // Remove that particular booking
           }
-
+  
           return true; // Keep the booking
         });
+  
         const hasDuplicates =
           new Set(canceledSeats).size !== canceledSeats.length;
+        
         if (!hasDuplicates) {
           event.availableSeats = [...event.availableSeats, ...canceledSeats]; // updating the available seats with cancelled seats.
         }
-
-        event.markModified('bookings'); // to update the confirmation state in db
-        await event.save();
+  
+        await this.eventModel.updateOne(
+          { _id: event._id },
+          {
+            $set: {
+              bookings: event.bookings,
+              availableSeats: event.availableSeats,
+            },
+          }
+        );
       }
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
-
+  
   // To find the event by id
-  async findEvent(id: string): Promise<Event> {
+  findEvent = async (id: string): Promise<Event> =>{
     try {
       return this.eventModel.findById(id);
     } catch (error) {
@@ -298,10 +307,10 @@ export class EventsService {
   }
 
   // To update the event
-  async updateEvent(
+  updateEvent = async (
     eventId: string,
     updatedEventDto: UpdateEventDto,
-  ): Promise<Object> {
+  ): Promise<Object> =>{
     try {
       await this.eventModel.findByIdAndUpdate(eventId, updatedEventDto);
       return {
@@ -314,7 +323,7 @@ export class EventsService {
   }
 
   // To delete the Event
-  async deleteEvent(eventId: string): Promise<Object> {
+  deleteEvent = async (eventId: string): Promise<Object> =>{
     try {
       await this.eventModel.findByIdAndDelete(eventId);
       return {
@@ -327,10 +336,10 @@ export class EventsService {
   }
 
   // To cancel the booking for a specific event by admin
-  async cancelBookingByAdmin(
+  cancelBookingByAdmin = async (
     eventId: string,
     adminName: string,
-  ): Promise<Object> {
+  ): Promise<Object> =>{
     try {
       const canceledSeats: number[] = [];
       const event = await this.eventModel.findById(eventId).exec();
@@ -360,7 +369,7 @@ export class EventsService {
     }
   }
 
-  async getSpecificEvent(id: string): Promise<any> {
+  getSpecificEvent = async (id: string): Promise<any> =>{
     try {
       return this.eventModel.findById(id);
     } catch (error) {
@@ -368,10 +377,10 @@ export class EventsService {
     }
   }
 
-  async updateAvailableSeats(
+  updateAvailableSeats = async (
     eventId: string,
     cancelledSeats: number[],
-  ): Promise<void> {
+  ): Promise<void> =>{
     try {
       const event = await this.eventModel.findById(eventId);
 
@@ -385,8 +394,9 @@ export class EventsService {
       // Update available seats by removing cancelled seats
       event.availableSeats = [...event.availableSeats, ...uniqueCancelledSeats];
 
-      // Save the updated event
-      await event.save();
+      // Save the updated event usinng updateOne
+      await this.eventModel.updateOne({ _id: event._id }, { $set
+        : { availableSeats: event.availableSeats } });
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }

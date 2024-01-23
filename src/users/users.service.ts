@@ -24,29 +24,17 @@ export class UsersService {
     private eventsService: EventsService,
   ) {}
 
-  // To Create the User
-  async create(user: CreateUserDto): Promise<Object> {
+  create = async (user: CreateUserDto): Promise<Object> => {
     try {
-      //to check whether username , email and password are null
-      if (!user.username || !user.email || !user.password) {
-        throw new BadRequestException('All fields are required');
-      }
-      const existingUser = await this.userModel
-        .findOne({ username: user.username })
-        .exec();
+      const existingUser = await this.userModel.findOne({ username: user.username }).exec();
       if (existingUser) {
-        throw new ForbiddenException(
-          'User already exists with the given username!',
-        );
+        throw new ForbiddenException('User already exists with the given username!');
       }
 
       const saltRounds = 10;
       const salt = bcrypt.genSaltSync(saltRounds);
       const hashedPassword = await bcrypt.hash(user.password, salt);
-      const newUser = new this.userModel({
-        ...user,
-        password: hashedPassword,
-      });
+      const newUser = new this.userModel({ ...user, password: hashedPassword });
       await newUser.save();
 
       return {
@@ -57,13 +45,12 @@ export class UsersService {
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-  }
+  };
 
-  // To login the User and it will generate a token
-  async login(username: string, password: string): Promise<Object> {
+  login = async (username: string, password: string): Promise<Object> => {
     try {
-      if(username === "" && password === ""){
-        throw new BadRequestException("username  and password can't be null")
+      if (username === '' && password === '') {
+        throw new BadRequestException("username and password can't be null");
       }
 
       const user = await this.userModel.findOne({ username }).exec();
@@ -80,68 +67,69 @@ export class UsersService {
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-  }
+  };
 
-  // To get the specific User
-  async getUser(id: string) {
+  getUser = async (id: string):Promise<User>=> {
     try {
-      return await this.userModel.findById(id);
+
+      const user =  await this.userModel.findById(id);
+      return user;
     } catch (error) {
       throw new NotFoundException('User not found');
     }
-  }
+  };
 
-  // To delete the user
-  async deleteUser(id: string) {
+  deleteUser = async (id: string) => {
     try {
-      return await this.userModel.findByIdAndDelete(id);
-    } catch (error) {
-      throw new NotFoundException('User not found');
-    }
-  }
-
-  async updateUser(username: string, updateDto: updateUserDto): Promise<User | null> {
-    try {
-      //to check any of the data is null in updateDTo
-      if (Object.keys(updateDto).length === 0) {
-        throw new BadRequestException("Please provide at least one field to be updated");
+      const user = await this.userModel.findById(id);
+  
+      if (!user) {
+        throw new NotFoundException('User not found');
       }
-        if (updateDto.username) {
-            throw new HttpException("Can't update the username", HttpStatus.BAD_REQUEST);
-        }
-        //Null checks for updating the user
-        if(updateDto.email === "" && updateDto.password === ""){
-          throw new BadRequestException("Email and Password can't be null")
-        }
-        const updatedUser = await this.userModel.findOneAndUpdate(
-            { username },
-            {
-                $set: {
-                    email: updateDto.email || undefined,
-                    password: updateDto.password || undefined,
-                },
-            },
-            { new: true }
-        );
-
-        if (!updatedUser) {
-            throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-        }
-
-        return updatedUser;
+  
+      await this.userModel.updateOne({ _id: id }, { $set: { isDeleted: true } });
+  
+      return {
+        message: 'User has been soft-deleted',
+        statusCode: HttpStatus.OK,
+      };
     } catch (error) {
-        throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new NotFoundException('User not found');
     }
-}
+  };
+  
 
+  updateUser = async (username: string, updateDto: updateUserDto): Promise<User | null> => {
+    try {
+      if (updateDto.username) {
+        throw new HttpException("Can't update the username", HttpStatus.BAD_REQUEST);
+      }
+      // Null checks for updating the user
+      if (updateDto.email === '' && updateDto.password === '') {
+        throw new BadRequestException("Email and Password can't be null");
+      }
+      const updatedUser = await this.userModel.findOneAndUpdate(
+        { username },
+        {
+          $set: {
+            email: updateDto.email || undefined,
+            password: updateDto.password || undefined,
+          },
+        },
+        { new: true }
+      );
 
-  async updateBookings(
-    id: string,
-    seats: number[],
-    movieName: string,
-    showTime: Date,
-    eventId: string,
-  ): Promise<void> {
+      if (!updatedUser) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
+
+      return updatedUser;
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  };
+
+  updateBookings = async (id: string, seats: number[], movieName: string, showTime: Date, eventId: string): Promise<void> => {
     try {
       const user = await this.userModel.findById(id).exec();
 
@@ -162,9 +150,9 @@ export class UsersService {
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-  }
+  };
 
-  async getUserBookings(userId: string): Promise<any[]> {
+  getUserBookings = async (userId: string): Promise<any[]> => {
     try {
       const user = await this.userModel.findById(userId).exec();
       if (!user.bookings || user.bookings.length === 0) {
@@ -174,9 +162,9 @@ export class UsersService {
     } catch (error) {
       throw new NotFoundException('User not found');
     }
-  }
+  };
 
-  async cancelBooking(id: string, movieId: string): Promise<any> {
+  cancelBooking = async (id: string, movieId: string): Promise<any> => {
     try {
       const user = await this.userModel.findById(id);
       const event = await this.eventsService.getSpecificEvent;
@@ -185,9 +173,7 @@ export class UsersService {
         throw new BadRequestException('Event not found');
       }
 
-      const bookingIndex = user.bookings.findIndex(
-        (booking) => booking.movieId === movieId,
-      );
+      const bookingIndex = user.bookings.findIndex((booking) => booking.movieId === movieId);
 
       if (bookingIndex !== -1) {
         const cancelledSeats = user.bookings[bookingIndex].seatsBooked;
@@ -203,12 +189,10 @@ export class UsersService {
           message: 'Booking canceled successfully',
         };
       } else {
-        throw new BadRequestException(
-          'No bookings found for the specified movie',
-        );
+        throw new BadRequestException('No bookings found for the specified movie');
       }
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-  }
+  };
 }

@@ -69,9 +69,11 @@ export class UsersController {
   //To get the specific user
 //  ApiEndpoint: http://localhost:3000/users/:id
   @Get('getUser')
-  async getUser(@Query("id") id:string):Promise<User>{
+  @UseGuards(AuthGuard)
+  async getUser(@Req() req):Promise<User>{ 
+    const userId = req.user.sub;
     try{     
-      return this.usersService.getUser(id);
+      return this.usersService.getUser(userId);
     }
     catch(error){
       if(error instanceof NotFoundException){
@@ -91,11 +93,9 @@ export class UsersController {
   async deleteUser(@Req() req):Promise<Object>{
     const id =req.user.sub
     try{
-      await this.usersService.deleteUser(id)
-      return {
-        message:"User has Deleted!!",
-      }}
-    
+      return await this.usersService.deleteUser(id)
+ 
+    }
     catch(error){
       if(error instanceof NotFoundException){
         throw new NotFoundException(error.message)
