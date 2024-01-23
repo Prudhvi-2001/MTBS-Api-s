@@ -1,10 +1,11 @@
-import { Controller, Get, Query,Post, Body, Req,Patch, Param,Put, Delete ,Request, UseGuards, UsePipes, ValidationPipe, HttpStatus, HttpCode} from '@nestjs/common';
+import { Controller, Get, Query,Post, Body, Req,Patch, Param,Put, Delete ,Request, UseGuards, UsePipes, ValidationPipe, HttpStatus, HttpCode, BadRequestException, NotFoundException} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AuthGuard } from './guards/user.guard';
 import { updateUserDto } from './dto/update-user.dto';
 import {User} from "./schemas/user.schema"
 import { promises } from 'dns';
+import { errorMonitor } from 'events';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -22,7 +23,15 @@ export class UsersController {
   @Post("createUser")
   @UsePipes(ValidationPipe)
   create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto)
+    try{
+      return this.usersService.create(createUserDto)
+    }
+    catch(error){
+      if(error instanceof BadRequestException){
+        throw new BadRequestException(error.message)
+      }
+      throw error
+    }
   }
   //To login the user
   //Api EndPoint : https://localhost:3000/users/login
@@ -35,7 +44,18 @@ export class UsersController {
   
   @Post('login')
   login(@Body() loginUser:CreateUserDto){
-    return this.usersService.login(loginUser.username,loginUser.password)
+    try{
+      return this.usersService.login(loginUser.username,loginUser.password)
+    }
+    catch(error){
+      if(error instanceof NotFoundException){
+        throw new NotFoundException(error.message)
+      }
+      else if(error instanceof BadRequestException){
+        throw new BadRequestException(error.message)
+      }
+      throw error
+    }
   }
 //To check whether token is extracted by the headers and payload
 //ApiEndPoint:http://localhost:3000/users/profile
@@ -50,7 +70,18 @@ export class UsersController {
 //  ApiEndpoint: http://localhost:3000/users/:id
   @Get('getUser')
   async getUser(@Query("id") id:string):Promise<User>{
-    return this.usersService.getUser(id);
+    try{     
+      return this.usersService.getUser(id);
+    }
+    catch(error){
+      if(error instanceof NotFoundException){
+        throw new NotFoundException(error.message)
+      }
+      else if(error instanceof BadRequestException){
+        throw new BadRequestException(error.message)
+      }
+      throw error
+    }
   }
   //To delete User 
   //ApiEndPoint: http://localhost:3000/users/deleterUser/:id
@@ -59,9 +90,20 @@ export class UsersController {
   @Delete("deleteUser")
   async deleteUser(@Req() req):Promise<Object>{
     const id =req.user.sub
-    this.usersService.deleteUser(id)
-    return {
-      message:"User has Deleted!!",
+    try{
+      await this.usersService.deleteUser(id)
+      return {
+        message:"User has Deleted!!",
+      }}
+    
+    catch(error){
+      if(error instanceof NotFoundException){
+        throw new NotFoundException(error.message)
+      }
+      else if(error instanceof BadRequestException){
+        throw new BadRequestException(error.message)
+      }
+      throw error
     }
     
   }
@@ -71,21 +113,58 @@ export class UsersController {
   @UseGuards(AuthGuard)
   @Put('updateUser')
   async updateProfile(@Req() req, @Body() updateUserDto: updateUserDto):Promise<User> {
-    const userId = req.user.sub
+    try{
+      const userId = req.user.sub
     return this.usersService.updateUser(userId, updateUserDto);
+
+    }
+    
+    catch(error){
+      if(error instanceof NotFoundException){
+        throw new NotFoundException(error.message)
+      }
+      else if(error instanceof BadRequestException){
+        throw new BadRequestException(error.message)
+      }
+      throw error
+    }
   }
 
   @UseGuards(AuthGuard)
   @Get('getBookings')
   async getBooking(@Req() req):Promise<any[]>{
+    try{
     const id = req.user.sub
     return this.usersService.getUserBookings(id);
+    }
+    
+    catch(error){
+      if(error instanceof NotFoundException){
+        throw new NotFoundException(error.message)
+      }
+      else if(error instanceof BadRequestException){
+        throw new BadRequestException(error.message)
+      }
+      throw error
+    }
   }
   @UseGuards(AuthGuard)
   @Get('cancelBookings')
   async cancelBookings(@Req() req , @Query("movieId") movieId:string):Promise<any>{
-    const userId = req.user.sub
+    try{
+      const userId = req.user.sub
     return this.usersService.cancelBooking(userId,movieId);
+    }
+    
+    catch(error){
+      if(error instanceof NotFoundException){
+        throw new NotFoundException(error.message)
+      }
+      else if(error instanceof BadRequestException){
+        throw new BadRequestException(error.message)
+      }
+      throw error
+    }
   }
   
 }

@@ -28,20 +28,29 @@ export class EventsController {
   //ApiEndPoint:http://localhost:3000/events/createEvent
   //method:POST
   //req.body ={
-   // "name":"movie",
-   // "date":"11/01/2023",
-   //  availableSeats:[1,2,3,4,5,6,7,8,9,10...]
-   //  bookings:[]
+  // "name":"movie",
+  // "date":"11/01/2023",
+  //  availableSeats:[1,2,3,4,5,6,7,8,9,10...]
+  //  bookings:[]
   //}
   //req.headers.authorization = token (need to be there to access the routes)
-  
-  @Post("createEvent")
-  @SetMetadata("isAdmin",true)
+
+  @Post('createEvent')
+  @SetMetadata('isAdmin', true)
   @UsePipes(ValidationPipe)
   @UseGuards(AdminGuard)
-  async createEvent(@Req() req,@Body() eventDto:EventDto):Promise<Object>{
-    const createdBy:string = req.user.username
-    return this.eventsService.create(eventDto,createdBy)
+  async createEvent(@Req() req, @Body() eventDto: EventDto): Promise<Object> {
+    const createdBy: string = req.user.username;
+    try{    
+      return this.eventsService.create(eventDto, createdBy);
+    }
+    catch(error){
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      } else if (error instanceof BadRequestException) {
+        throw new BadRequestException(error.message);
+      }
+    }
   }
   //To find all the events
   //ApiEndPoint : http://localhost:3000/events
@@ -49,33 +58,41 @@ export class EventsController {
 
   @Get()
   findAll(): Promise<Event[]> {
-    return this.eventsService.findAll();
-  }
-// To list available seats to book for specific Event
-// ApiEndpoint : http://localhost:3000/events/:id/availableSeats
-// Method      : GET
-// params      : id - is required
-
-  @Get('available-seats')
-  findAvailableSeats(@Query('movieId') eventId: string): Promise<Object> {
-    try{ return this.eventsService.findAvailableSeats(eventId);}
+    try{  
+        return this.eventsService.findAll();
+      }
     catch(error){
       if (error instanceof NotFoundException) {
         throw new NotFoundException(error.message);
       } else if (error instanceof BadRequestException) {
         throw new BadRequestException(error.message);
       }
-      throw error;
-
     }
-   
   }
-//To book the seats for specific event
-//ApiEndPoint :http://localhost:3000/:eventId/book-seats
-//Method       : POST
-//params       : eventId - is required
-//req.headers.authorization :token(must be there to book the seats)
-//req.body={ "seats":[12,13,14]}
+  // To list available seats to book for specific Event
+  // ApiEndpoint : http://localhost:3000/events/:id/availableSeats
+  // Method      : GET
+  // params      : id - is required
+
+  @Get('available-seats')
+  findAvailableSeats(@Query('movieId') eventId: string): Promise<Object> {
+    try {
+      return this.eventsService.findAvailableSeats(eventId);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      } else if (error instanceof BadRequestException) {
+        throw new BadRequestException(error.message);
+      }
+      throw error;
+    }
+  }
+  //To book the seats for specific event
+  //ApiEndPoint :http://localhost:3000/:eventId/book-seats
+  //Method       : POST
+  //params       : eventId - is required
+  //req.headers.authorization :token(must be there to book the seats)
+  //req.body={ "seats":[12,13,14]}
   @UsePipes(ValidationPipe)
   @UseGuards(AuthGuard)
   @Post('book-seats')
@@ -84,9 +101,9 @@ export class EventsController {
     @Req() req,
     @Body('seats') seats: number[],
   ): Promise<Object> {
-    const userId:string = req.user.sub
+    const userId: string = req.user.sub;
     try {
-     return  await this.eventsService.bookSeats(eventId, userId, seats);
+      return await this.eventsService.bookSeats(eventId, userId, seats);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new NotFoundException(error.message);
@@ -96,7 +113,7 @@ export class EventsController {
       throw error;
     }
   }
-  
+
   //To confirm the booking after the user has reserved
   //ApiEndPoint : http://localhost:3000/:eventId/confirm-booking
   //Method       : POST
@@ -104,14 +121,16 @@ export class EventsController {
   //req.headers.authorization : token(to identify who is trying to make a request)
   //No body params are needed here as we just need to send the event id and auth token
 
-
   @UseGuards(AuthGuard)
   @Post('confirm-booking')
-  async confirmBooking(@Query('movieId') eventId: string, @Req() req): Promise<Object> {
+  async confirmBooking(
+    @Query('movieId') eventId: string,
+    @Req() req,
+  ): Promise<Object> {
     const userId = req.user.sub;
-    const username = req.user.username
+    const username = req.user.username;
     try {
-      return await  this.eventsService.confirmBooking(eventId, userId,username);
+      return await this.eventsService.confirmBooking(eventId, userId, username);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new NotFoundException(error.message);
@@ -120,30 +139,56 @@ export class EventsController {
       }
       throw error;
     }
-    
   }
   //to get the specific event
   //API Endpoint : http://localhost:3000/events/:id
   //Method        : GET
   //Params        : id - is required
 
-  @Get("getEvent")
-  getEvent(@Query("movieId") movieId:string):Promise<Event>{
-    return this.eventsService.findEvent(movieId)
-  }
+  @Get('getEvent')
+  getEvent(@Query('movieId') movieId: string): Promise<Event> {
+    try{
+      return this.eventsService.findEvent(movieId);
+    }
+    catch(error){
+      if(error instanceof NotFoundException){
+        throw new NotFoundException(error.message)
+      }
+      else if(error instanceof BadRequestException){
+        throw new BadRequestException(error.message)
+      }
 
+      throw error;
+    }
+    
+  }
 
   //To update the event
   //API End Point : http://localhost:3000/events/:eventId/updateEvent
   //Method         : PUT
   //Params         : eventId - is required , data - is required
   //req.body.data contains updated information about the event
-  @SetMetadata("isAdmin",true)
+  @SetMetadata('isAdmin', true)
   @UseGuards(AdminGuard)
-  @Put("updateEvent")
-  async UpdateEvent(@Req() req ,@Body() updateEventDto:UpdateEventDto , @Query("movieId") eventId:string):Promise<Object>{
-    console.log(req.user.sub);
-    return this.eventsService.updateEvent(eventId ,updateEventDto)
+  @Put('updateEvent')
+  async UpdateEvent(
+    @Req() req,
+    @Body() updateEventDto: UpdateEventDto,
+    @Query('movieId') eventId: string,
+  ): Promise<Object> {
+    try{
+      return this.eventsService.updateEvent(eventId, updateEventDto);
+    }
+    catch(error){
+      if(error instanceof NotFoundException){
+        throw new NotFoundException(error.message)
+      }
+      else if(error instanceof BadRequestException){
+        throw new BadRequestException(error.message)
+      }
+
+      throw error;
+    }
   }
 
   //to delete the event with admin authorization
@@ -151,25 +196,49 @@ export class EventsController {
   //Method        : DELETE
   //Params        : eventId - is required
 
-  @SetMetadata("isAdmin",true)
+  @SetMetadata('isAdmin', true)
   @UseGuards(AdminGuard)
-  @Delete("deleteEvent")
-  async deleteEvent(@Param("movieId") eventId:string):Promise<Object>{
-    return this.eventsService.deleteEvent(eventId)
-  }
+  @Delete('deleteEvent')
+  async deleteEvent(@Param('movieId') eventId: string): Promise<Object> {
+    try{
+      return this.eventsService.deleteEvent(eventId);
+    }
+    catch(error){
+      if(error instanceof NotFoundException){
+        throw new NotFoundException(error.message)
+      }
+      else if(error instanceof BadRequestException){
+        throw new BadRequestException(error.message)
+      }
 
+      throw error;
+    }
+  }
 
   //To cancel the unconfirmed bookings by admin
-  @SetMetadata("isAdmin",true)
+  @SetMetadata('isAdmin', true)
   @UseGuards(AdminGuard)
   @Post('cancel-booking')
-  async cancelUnconfirmedAdmin(@Req() req, @Query("movieId") movieId:string, username:string):Promise<Object>{
-   const userName = req.user.username
-   return this.eventsService.cancelBookingByAdmin(movieId ,userName);
+  async cancelUnconfirmedAdmin(
+    @Req() req,
+    @Query('movieId') movieId: string,
+    username: string,
+  ): Promise<Object> {
+    const userName = req.user.username;
+    try{    
+      
+      return this.eventsService.cancelBookingByAdmin(movieId, userName);
+
+    }
+    catch(error){
+      if(error instanceof NotFoundException){
+        throw new NotFoundException(error.message)
+      }
+      else if(error instanceof BadRequestException){
+        throw new BadRequestException(error.message)
+      }
+
+      throw error;
+    }
   }
-  
-
 }
-
-
-
