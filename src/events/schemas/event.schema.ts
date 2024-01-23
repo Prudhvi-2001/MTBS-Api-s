@@ -2,7 +2,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import MongooseSchema from'mongoose'
-import { IS_ARRAY, IsArray, IsDate, IsNotEmpty, IsOptional, IsString, isArray, isNotEmpty } from 'class-validator';
+import { IS_ARRAY, IsArray, IsDate, IsNotEmpty, IsOptional, IsString, isArray, isNotEmpty , IsBoolean, IsDateString
+} from 'class-validator';
 export class Booking{
   @Prop()
   user:string;
@@ -39,32 +40,40 @@ export class Event extends Document {
 }
 
 export class EventDto{
-    @IsString({message:"Must be a String"})
-    @IsNotEmpty()
-    name:string;
-    @IsOptional()
-    date:Date;
+  @IsString({ message: "Must be a String" })
+  @IsNotEmpty({ message: "Name should not be empty" })
+  name: string;
 
-    @IsArray()
-    @IsNotEmpty()
-    availableSeats:number[];
+  @IsDateString({}, { message: "Invalid date format" })
+  @IsOptional()
+  date: Date;
 
-    bookings:Booking[]
+  @IsArray({ message: "Available seats must be an array" })
+  @IsNotEmpty({ message: "Available seats should not be empty" })
+  availableSeats: number[];
 
-    isDeleted?:boolean
+  bookings: Booking[];
+
+  @IsBoolean({ message: "isDeleted should be a boolean value" })
+  isDeleted?: boolean;
 }
 export class UpdateEventDto{
-  @IsString({message:"Must be a String"})
-  @IsNotEmpty()
-  name:string;
-  @IsDate()
-  date:Date;
-  @IsArray()
-  @IsNotEmpty()
-  availableSeats:number[];
-  @IsArray()
-  bookings:Booking[]
-  isDeleted?:boolean
+  @IsString({ message: "Must be a String" })
+  @IsNotEmpty({ message: "Name should not be empty" })
+  name: string;
+
+  @IsDateString({}, { message: "Invalid date format" })
+  date: Date;
+
+  @IsArray({ message: "Available seats must be an array" })
+  @IsNotEmpty({ message: "Available seats should not be empty" })
+  availableSeats: number[];
+
+  @IsArray({ message: "Bookings must be an array" })
+  bookings: Booking[];
+
+  @IsBoolean({ message: "isDeleted should be a boolean value" })
+  isDeleted?: boolean;
 }
 function duplicateSeats(array:number[]){
   return array.length === new Set(array).size  //checking if the length of the array is equals to the length of the set is created
