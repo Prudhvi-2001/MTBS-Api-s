@@ -41,15 +41,8 @@ export class EventsController {
   @UseGuards(AdminGuard)
   async createEvent(@Req() req, @Body() eventDto: EventDto): Promise<Object> {
     const createdBy: string = req.user.username;
-    try {
-      return this.eventsService.create(eventDto, createdBy);
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new NotFoundException(error.message);
-      } else if (error instanceof BadRequestException) {
-        throw new BadRequestException(error.message);
-      }
-    }
+
+    return this.eventsService.create(eventDto, createdBy);
   }
   //To find all the events
   //ApiEndPoint : http://localhost:3000/events
@@ -57,15 +50,7 @@ export class EventsController {
 
   @Get()
   findAll(): Promise<Event[]> {
-    try {
-      return this.eventsService.findAll();
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new NotFoundException(error.message);
-      } else if (error instanceof BadRequestException) {
-        throw new BadRequestException(error.message);
-      }
-    }
+    return this.eventsService.findAll();
   }
   // To list available seats to book for specific Event
   // ApiEndpoint : http://localhost:3000/events/:id/availableSeats
@@ -74,16 +59,7 @@ export class EventsController {
 
   @Get('available-seats')
   findAvailableSeats(@Query('movieId') eventId: string): Promise<Object> {
-    try {
-      return this.eventsService.findAvailableSeats(eventId);
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new NotFoundException(error.message);
-      } else if (error instanceof BadRequestException) {
-        throw new BadRequestException(error.message);
-      }
-      throw error;
-    }
+    return this.eventsService.findAvailableSeats(eventId);
   }
   //To book the seats for specific event
   //ApiEndPoint :http://localhost:3000/:eventId/book-seats
@@ -100,16 +76,8 @@ export class EventsController {
     @Body('seats') seats: number[],
   ): Promise<Object> {
     const userId: string = req.user.sub;
-    try {
-      return await this.eventsService.bookSeats(eventId, userId, seats);
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new NotFoundException(error.message);
-      } else if (error instanceof BadRequestException) {
-        throw new BadRequestException(error.message);
-      }
-      throw error;
-    }
+
+    return await this.eventsService.bookSeats(eventId, userId, seats);
   }
 
   //To confirm the booking after the user has reserved
@@ -127,16 +95,8 @@ export class EventsController {
   ): Promise<Object> {
     const userId = req.user.sub;
     const username = req.user.username;
-    try {
-      return await this.eventsService.confirmBooking(eventId, userId, username);
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new NotFoundException(error.message);
-      } else if (error instanceof BadRequestException) {
-        throw new BadRequestException(error.message);
-      }
-      throw error;
-    }
+
+    return await this.eventsService.confirmBooking(eventId, userId, username);
   }
   //to get the specific event
   //API Endpoint : http://localhost:3000/events/:id
@@ -145,17 +105,7 @@ export class EventsController {
 
   @Get('getEvent')
   getEvent(@Query('movieId') movieId: string): Promise<Event> {
-    try {
-      return this.eventsService.findEvent(movieId);
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new NotFoundException(error.message);
-      } else if (error instanceof BadRequestException) {
-        throw new BadRequestException(error.message);
-      }
-
-      throw error;
-    }
+    return this.eventsService.findEvent(movieId);
   }
 
   //To update the event
@@ -171,17 +121,7 @@ export class EventsController {
     @Body() updateEventDto: UpdateEventDto,
     @Query('movieId') eventId: string,
   ): Promise<Object> {
-    try {
-      return this.eventsService.updateEvent(eventId, updateEventDto);
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new NotFoundException(error.message);
-      } else if (error instanceof BadRequestException) {
-        throw new BadRequestException(error.message);
-      }
-
-      throw error;
-    }
+    return this.eventsService.updateEvent(eventId, updateEventDto);
   }
 
   //to delete the event with admin authorization
@@ -193,17 +133,7 @@ export class EventsController {
   @UseGuards(AdminGuard)
   @Delete('deleteEvent')
   async deleteEvent(@Param('movieId') eventId: string): Promise<Object> {
-    try {
-      return this.eventsService.deleteEvent(eventId);
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new NotFoundException(error.message);
-      } else if (error instanceof BadRequestException) {
-        throw new BadRequestException(error.message);
-      }
-
-      throw error;
-    }
+    return this.eventsService.deleteEvent(eventId);
   }
 
   //To cancel the unconfirmed bookings by admin
@@ -216,16 +146,7 @@ export class EventsController {
     username: string,
   ): Promise<Object> {
     const userName = req.user.username;
-    try {
-      return this.eventsService.cancelBookingByAdmin(movieId, userName);
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new NotFoundException(error.message);
-      } else if (error instanceof BadRequestException) {
-        throw new BadRequestException(error.message);
-      }
 
-      throw error;
-    }
+    return this.eventsService.cancelBookingByAdmin(movieId, userName);
   }
 }

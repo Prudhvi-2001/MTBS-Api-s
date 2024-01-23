@@ -311,8 +311,8 @@ export class EventsService {
   // To find the event by id
   findEvent = async (id: string): Promise<Event> => {
     try {
-      const event = this.eventModel.findById(id);
-      if ((await event).isDeleted === true) {
+      const event = await this.eventModel.findById(id);
+      if (event.isDeleted === true) {
         throw new BadRequestException("Deleted Event Can't be retrieved..");
       }
       return event;

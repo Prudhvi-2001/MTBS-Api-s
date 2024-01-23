@@ -41,14 +41,7 @@ export class UsersController {
   @Post('createUser')
   @UsePipes(ValidationPipe)
   create(@Body() createUserDto: CreateUserDto) {
-    try {
-      return this.usersService.create(createUserDto);
-    } catch (error) {
-      if (error instanceof BadRequestException) {
-        throw new BadRequestException(error.message);
-      }
-      throw error;
-    }
+    return this.usersService.create(createUserDto);
   }
   //To login the user
   //Api EndPoint : https://localhost:3000/users/login
@@ -61,16 +54,7 @@ export class UsersController {
 
   @Post('login')
   login(@Body() loginUser: CreateUserDto) {
-    try {
-      return this.usersService.login(loginUser.username, loginUser.password);
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new NotFoundException(error.message);
-      } else if (error instanceof BadRequestException) {
-        throw new BadRequestException(error.message);
-      }
-      throw error;
-    }
+    return this.usersService.login(loginUser.username, loginUser.password);
   }
   //To check whether token is extracted by the headers and payload
   //ApiEndPoint:http://localhost:3000/users/profile
@@ -87,16 +71,8 @@ export class UsersController {
   @UseGuards(AuthGuard)
   async getUser(@Req() req): Promise<User> {
     const userId = req.user.sub;
-    try {
-      return this.usersService.getUser(userId);
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new NotFoundException(error.message);
-      } else if (error instanceof BadRequestException) {
-        throw new BadRequestException(error.message);
-      }
-      throw error;
-    }
+
+    return this.usersService.getUser(userId);
   }
   //To delete User
   //ApiEndPoint: http://localhost:3000/users/deleterUser/:id
@@ -105,16 +81,8 @@ export class UsersController {
   @Delete('deleteUser')
   async deleteUser(@Req() req): Promise<Object> {
     const id = req.user.sub;
-    try {
-      return await this.usersService.deleteUser(id);
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new NotFoundException(error.message);
-      } else if (error instanceof BadRequestException) {
-        throw new BadRequestException(error.message);
-      }
-      throw error;
-    }
+
+    return await this.usersService.deleteUser(id);
   }
   //To update the User
   //ApiEndPoint:http://localhost:3000/users/:id/updateUser
@@ -125,35 +93,17 @@ export class UsersController {
     @Req() req,
     @Body() updateUserDto: updateUserDto,
   ): Promise<User> {
-    try {
-      const userName = req.user.username;
-      const userId = req.user.sub;
-      console.log(userName);
-      return this.usersService.updateUser(userId, userName, updateUserDto);
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new NotFoundException(error.message);
-      } else if (error instanceof BadRequestException) {
-        throw new BadRequestException(error.message);
-      }
-      throw error;
-    }
+    const userName = req.user.username;
+    const userId = req.user.sub;
+    console.log(userName);
+    return this.usersService.updateUser(userId, userName, updateUserDto);
   }
 
   @UseGuards(AuthGuard)
   @Get('getBookings')
   async getBooking(@Req() req): Promise<any[]> {
-    try {
-      const id = req.user.sub;
-      return this.usersService.getUserBookings(id);
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new NotFoundException(error.message);
-      } else if (error instanceof BadRequestException) {
-        throw new BadRequestException(error.message);
-      }
-      throw error;
-    }
+    const id = req.user.sub;
+    return this.usersService.getUserBookings(id);
   }
   @UseGuards(AuthGuard)
   @Get('cancelBookings')
@@ -161,17 +111,8 @@ export class UsersController {
     @Req() req,
     @Query('movieId') movieId: string,
   ): Promise<any> {
-    try {
-      const userId = req.user.sub;
-      return this.usersService.cancelBooking(userId, movieId);
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new NotFoundException(error.message);
-      } else if (error instanceof BadRequestException) {
-        throw new BadRequestException(error.message);
-      }
-      throw error;
-    }
+    const userId = req.user.sub;
+    return this.usersService.cancelBooking(userId, movieId);
   }
 }
 
