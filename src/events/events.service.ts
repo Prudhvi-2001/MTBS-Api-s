@@ -45,12 +45,12 @@ export class EventsService {
       if (!event.availableSeats) {
         throw new NotFoundException("Can't find seats");
       }
-      for (const seat of event.availableSeats) {
-        if (seat > 100) {
-          throw new BadRequestException(
-            'Seat number cannot exceed 100!! You have a capacity of 100',
-          );
-        }
+      //using es6 find function
+      const seatLimit = event.availableSeats.find(seat => seat > 100);
+      if (seatLimit) {
+        throw new BadRequestException(
+          'Seat number cannot exceed 100!! You have a capacity of 100',
+        );
       }
       if (event.availableSeats.length === 0) {
         throw new NotFoundException("Seats Can't be empty");
@@ -162,13 +162,14 @@ export class EventsService {
       }
 
       const availableSeats = event.availableSeats;
-      const unavailableSeats: number[] = [];
+      // const unavailableSeats: number[] = [];
 
-      for (const selectedSeat of seats) {
-        if (!availableSeats.includes(selectedSeat)) {
-          unavailableSeats.push(selectedSeat);
-        }
-      }
+      // for (const selectedSeat of seats) {
+      //   if (!availableSeats.includes(selectedSeat)) {
+      //     unavailableSeats.push(selectedSeat);
+      //   }
+      // }
+      const unavailableSeats = seats.filter(selectedSeat => !availableSeats.includes(selectedSeat));
 
       if (unavailableSeats.length > 0) {
         throw new BadRequestException(
