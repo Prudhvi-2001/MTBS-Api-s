@@ -729,6 +729,7 @@ http://localhost:3000/events/deleteEvent?movieId=65a2502676c6c5720eacf3c1
 
 <h5>Made the username as primary key</h5>
 <p>If the user tries update the username it will throw Exception</p>
+
 <img
   src="readme-Img\3.5.jpg"
   width="80%"
@@ -741,6 +742,7 @@ http://localhost:3000/events/deleteEvent?movieId=65a2502676c6c5720eacf3c1
  />
 
  <p>User will be updated if you don't specify the username in request body</p>
+ 
  <img
   src="readme-Img\3.6.jpg"
   width="80%"
@@ -755,6 +757,7 @@ http://localhost:3000/events/deleteEvent?movieId=65a2502676c6c5720eacf3c1
  <h5>Instead of deleting the user completely from the database used  soft delete Approach by implementing the isDeleted property in User Schema</h5>
 
 <p>Intially it will be false</p>
+
 
 <img
   src="readme-Img\3.7.jpg"
@@ -782,6 +785,7 @@ http://localhost:3000/events/deleteEvent?movieId=65a2502676c6c5720eacf3c1
  />
 
 <p>If we tries to get delted user</p>
+
 <img
   src="readme-Img\3.8.jpg"
   width="80%"
@@ -795,6 +799,7 @@ http://localhost:3000/events/deleteEvent?movieId=65a2502676c6c5720eacf3c1
 
  <p>If we tries to update the deleted user</p>
 
+ 
  <img
   src="readme-Img\3.9.jpg"
   width="80%"
