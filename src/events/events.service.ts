@@ -36,7 +36,7 @@ export class EventsService {
     createBy: string,
   ): Promise<Object | null> => {
     try {
-      if (event.name === '') {
+      if (!event || !event.name) {
         throw new BadRequestException("Event name Can't be null");
       }
       const existingEvent = await this.eventModel
@@ -147,7 +147,6 @@ export class EventsService {
       if (!seats) {
         throw new NotFoundException("Can't find seats");
       }
-
       if (!event) {
         throw new NotFoundException("Oops! Can't find the Event");
       }
