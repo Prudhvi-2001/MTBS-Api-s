@@ -11,6 +11,7 @@ import {
   maxLength,
   min,
   minLength,
+  IsOptional
 } from 'class-validator';
 import { IsBoolean } from 'class-validator';
 export class CreateUserDto {
@@ -32,7 +33,7 @@ export class CreateUserDto {
   @MinLength(6, { message: 'Password should be more than 6 characters' })
   @MaxLength(12, { message: 'Should not be more than 12 characters' })
   password: string;
-
+  @IsOptional()
   @IsBoolean({ message: 'isDeleted should be a boolean value' })
   isDeleted?: boolean;
 }
