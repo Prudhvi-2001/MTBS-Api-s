@@ -17,12 +17,11 @@ import { Booking, EventSchema } from 'src/events/schemas/event.schema';
         schema: UserSchema,
       },
     ]),
-   
+
     JwtModule.register({
       secret: authenticationConstants.SECRET_KEY,
       signOptions: { expiresIn: '1hr' },
     }),
-
   ],
   controllers: [UsersController],
   providers: [UsersService],

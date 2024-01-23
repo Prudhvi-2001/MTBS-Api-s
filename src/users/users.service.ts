@@ -26,9 +26,13 @@ export class UsersService {
 
   create = async (user: CreateUserDto): Promise<Object> => {
     try {
-      const existingUser = await this.userModel.findOne({ username: user.username }).exec();
+      const existingUser = await this.userModel
+        .findOne({ username: user.username })
+        .exec();
       if (existingUser) {
-        throw new ForbiddenException('User already exists with the given username!');
+        throw new ForbiddenException(
+          'User already exists with the given username!',
+        );
       }
 
       const saltRounds = 10;
@@ -69,12 +73,11 @@ export class UsersService {
     }
   };
 
-  getUser = async (id: string):Promise<User>=> {
+  getUser = async (id: string): Promise<User> => {
     try {
-
-      const user =  await this.userModel.findById(id);
-      if(user.isDeleted === true){
-        throw new NotFoundException("Deleted data is not retrieved")
+      const user = await this.userModel.findById(id);
+      if (user.isDeleted === true) {
+        throw new NotFoundException('Deleted data is not retrieved');
       }
       return user;
     } catch (error) {
@@ -85,13 +88,16 @@ export class UsersService {
   deleteUser = async (id: string) => {
     try {
       const user = await this.userModel.findById(id);
-  
+
       if (!user) {
         throw new NotFoundException('User not found');
       }
-  
-      await this.userModel.updateOne({ _id: id }, { $set: { isDeleted: true } });
-  
+
+      await this.userModel.updateOne(
+        { _id: id },
+        { $set: { isDeleted: true } },
+      );
+
       return {
         message: 'User has been soft-deleted',
         statusCode: HttpStatus.OK,
@@ -100,20 +106,26 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
   };
-  
 
-  updateUser = async (userId:string,username: string, updateDto: updateUserDto): Promise<User | null> => {
+  updateUser = async (
+    userId: string,
+    username: string,
+    updateDto: updateUserDto,
+  ): Promise<User | null> => {
     try {
       if (updateDto.username) {
-        throw new HttpException("Can't update the username", HttpStatus.BAD_REQUEST);
+        throw new HttpException(
+          "Can't update the username",
+          HttpStatus.BAD_REQUEST,
+        );
       }
       // Null checks for updating the user
       if (updateDto.email === '' && updateDto.password === '') {
         throw new BadRequestException("Email and Password can't be null");
       }
-      const user = await this.userModel.findById(userId)
-      if(user.isDeleted === true){
-        throw new BadRequestException("Deleted data can't be updated.")
+      const user = await this.userModel.findById(userId);
+      if (user.isDeleted === true) {
+        throw new BadRequestException("Deleted data can't be updated.");
       }
       console.log(user.isDeleted);
       const updatedUser = await this.userModel.findOneAndUpdate(
@@ -124,9 +136,9 @@ export class UsersService {
             password: updateDto.password || undefined,
           },
         },
-        { new: true }
+        { new: true },
       );
-      
+
       if (!updatedUser) {
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
       }
@@ -137,7 +149,13 @@ export class UsersService {
     }
   };
 
-  updateBookings = async (id: string, seats: number[], movieName: string, showTime: Date, eventId: string): Promise<void> => {
+  updateBookings = async (
+    id: string,
+    seats: number[],
+    movieName: string,
+    showTime: Date,
+    eventId: string,
+  ): Promise<void> => {
     try {
       const user = await this.userModel.findById(id).exec();
 
@@ -181,7 +199,9 @@ export class UsersService {
         throw new BadRequestException('Event not found');
       }
 
-      const bookingIndex = user.bookings.findIndex((booking) => booking.movieId === movieId);
+      const bookingIndex = user.bookings.findIndex(
+        (booking) => booking.movieId === movieId,
+      );
 
       if (bookingIndex !== -1) {
         const cancelledSeats = user.bookings[bookingIndex].seatsBooked;
@@ -197,7 +217,9 @@ export class UsersService {
           message: 'Booking canceled successfully',
         };
       } else {
-        throw new BadRequestException('No bookings found for the specified movie');
+        throw new BadRequestException(
+          'No bookings found for the specified movie',
+        );
       }
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);

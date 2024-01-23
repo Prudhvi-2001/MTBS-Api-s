@@ -31,13 +31,14 @@ export class EventsService {
   ) {}
 
   // To create the specific event with available seats and Bookings available
-  create = async (event: EventDto, createBy: string): Promise<Object | null> =>{
+  create = async (
+    event: EventDto,
+    createBy: string,
+  ): Promise<Object | null> => {
     try {
-      
-      if(event.name === ""){
-        throw new BadRequestException("Event name Can't be null")
-
-      } 
+      if (event.name === '') {
+        throw new BadRequestException("Event name Can't be null");
+      }
       const existingEvent = await this.eventModel
         .findOne({ name: event.name })
         .exec();
@@ -75,18 +76,18 @@ export class EventsService {
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-  }
+  };
 
-  findAll = async(): Promise<Event[]> =>{
+  findAll = async (): Promise<Event[]> => {
     try {
       return this.eventModel.find().exec();
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-  }
+  };
 
   // To find the available seats for booking
-  findAvailableSeats = async (eventId: string): Promise<Object> =>{
+  findAvailableSeats = async (eventId: string): Promise<Object> => {
     try {
       const event = await this.eventModel.findById(eventId).exec();
 
@@ -110,94 +111,105 @@ export class EventsService {
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-  }
+  };
 
   // To book the seats
-  bookSeats = async (eventId: string, userId: string, seats: number[]): Promise<Object> =>{
+  bookSeats = async (
+    eventId: string,
+    userId: string,
+    seats: number[],
+  ): Promise<Object> => {
     try {
-        // Check if seats are null
-        if (!seats || seats.length === 0) {
-            throw new BadRequestException("Seats can't be null to book");
-        }
+      // Check if seats are null
+      if (!seats || seats.length === 0) {
+        throw new BadRequestException("Seats can't be null to book");
+      }
 
-        const event = await this.eventModel.findById(eventId).exec();
+      const event = await this.eventModel.findById(eventId).exec();
 
-        const hasDuplicates = new Set(seats).size !== seats.length;
-        if (hasDuplicates) {
-            throw new BadRequestException("Repeated seat numbers aren't allowed to book");
-        }
-
-        if (seats.length === 0) {
-            throw new BadRequestException('Please mention seats!');
-        }
-
-        if (!Array.isArray(seats)) {
-            throw new BadRequestException('Invalid seats format. Please provide seat numbers.');
-        }
-
-        if (!seats) {
-            throw new NotFoundException("Can't find seats");
-        }
-
-        if (!event) {
-            throw new NotFoundException("Oops! Can't find the Event");
-        }
-
-        const existingBooking = event.bookings.find(
-            (booking) => booking.user.toString() === userId && !booking.confirmed,
+      const hasDuplicates = new Set(seats).size !== seats.length;
+      if (hasDuplicates) {
+        throw new BadRequestException(
+          "Repeated seat numbers aren't allowed to book",
         );
+      }
 
-        if (existingBooking) {
-            throw new BadRequestException('User had a booking that has yet to be confirmed!');
-        }
+      if (seats.length === 0) {
+        throw new BadRequestException('Please mention seats!');
+      }
 
-        const availableSeats = event.availableSeats;
-        const unavailableSeats: number[] = [];
-
-        for (const selectedSeat of seats) {
-            if (!availableSeats.includes(selectedSeat)) {
-                unavailableSeats.push(selectedSeat);
-            }
-        }
-
-        if (unavailableSeats.length > 0) {
-            throw new BadRequestException(`Seats ${unavailableSeats.join(', ')} are not available`);
-        }
-
-        const user = await this.usersService.getUser(userId);
-
-        // Use updateOne instead of save
-        await this.eventModel.updateOne(
-            { _id: eventId },
-            {
-                $push: {
-                    bookings: {
-                        user: userId,
-                        seats,
-                        confirmed: false,
-                        createdAt: new Date(),
-                    },
-                },
-                $pull: {
-                    availableSeats: { $in: seats },
-                },
-            }
+      if (!Array.isArray(seats)) {
+        throw new BadRequestException(
+          'Invalid seats format. Please provide seat numbers.',
         );
+      }
 
-        return {
-            message: 'Please Confirm the booking!',
-            bookingDetails: {
-                user: user.username,
-                event: event.name,
-                seats: seats.join(', '),
-                BookingConfirmation: false,
+      if (!seats) {
+        throw new NotFoundException("Can't find seats");
+      }
+
+      if (!event) {
+        throw new NotFoundException("Oops! Can't find the Event");
+      }
+
+      const existingBooking = event.bookings.find(
+        (booking) => booking.user.toString() === userId && !booking.confirmed,
+      );
+
+      if (existingBooking) {
+        throw new BadRequestException(
+          'User had a booking that has yet to be confirmed!',
+        );
+      }
+
+      const availableSeats = event.availableSeats;
+      const unavailableSeats: number[] = [];
+
+      for (const selectedSeat of seats) {
+        if (!availableSeats.includes(selectedSeat)) {
+          unavailableSeats.push(selectedSeat);
+        }
+      }
+
+      if (unavailableSeats.length > 0) {
+        throw new BadRequestException(
+          `Seats ${unavailableSeats.join(', ')} are not available`,
+        );
+      }
+
+      const user = await this.usersService.getUser(userId);
+
+      // Use updateOne instead of save
+      await this.eventModel.updateOne(
+        { _id: eventId },
+        {
+          $push: {
+            bookings: {
+              user: userId,
+              seats,
+              confirmed: false,
+              createdAt: new Date(),
             },
-        };
-    } catch (error) {
-        throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-}
+          },
+          $pull: {
+            availableSeats: { $in: seats },
+          },
+        },
+      );
 
+      return {
+        message: 'Please Confirm the booking!',
+        bookingDetails: {
+          user: user.username,
+          event: event.name,
+          seats: seats.join(', '),
+          BookingConfirmation: false,
+        },
+      };
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  };
 
   // To confirm the ticket
   confirmBooking = async (
@@ -249,39 +261,39 @@ export class EventsService {
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-  }
+  };
 
   // To cancel the unconfirmed tickets
   @Cron(CronExpression.EVERY_MINUTE) // to trigger the function every minute to find any unconfirmed bookings
   async cancelUnconfirmedBookings(): Promise<void> {
     try {
       const events = await this.eventModel.find().exec();
-  
+
       for (const event of events) {
         const originalAvailableSeats = event.availableSeats.slice(); // copy of availableSeats
         const canceledSeats: number[] = [];
-  
+
         event.bookings = event.bookings.filter((booking) => {
           const isConfirmed = booking.confirmed;
           const within10Minute =
             booking.createdAt > new Date(Date.now() - 1 * 60 * 1000);
-  
+
           if (!isConfirmed && !within10Minute) {
             // Booking is not confirmed and older than 10 minutes
             canceledSeats.push(...booking.seats);
             return false; // Remove that particular booking
           }
-  
+
           return true; // Keep the booking
         });
-  
+
         const hasDuplicates =
           new Set(canceledSeats).size !== canceledSeats.length;
-        
+
         if (!hasDuplicates) {
           event.availableSeats = [...event.availableSeats, ...canceledSeats]; // updating the available seats with cancelled seats.
         }
-  
+
         await this.eventModel.updateOne(
           { _id: event._id },
           {
@@ -289,36 +301,36 @@ export class EventsService {
               bookings: event.bookings,
               availableSeats: event.availableSeats,
             },
-          }
+          },
         );
       }
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
-  
+
   // To find the event by id
-  findEvent = async (id: string): Promise<Event> =>{
+  findEvent = async (id: string): Promise<Event> => {
     try {
       const event = this.eventModel.findById(id);
-      if((await event).isDeleted === true){
-        throw new BadRequestException("Deleted Event Can't be retrieved..")
+      if ((await event).isDeleted === true) {
+        throw new BadRequestException("Deleted Event Can't be retrieved..");
       }
-      return event
+      return event;
     } catch (error) {
       throw new NotFoundException('Event not found');
     }
-  }
+  };
 
   // To update the event
   updateEvent = async (
     eventId: string,
     updatedEventDto: UpdateEventDto,
-  ): Promise<Object> =>{
+  ): Promise<Object> => {
     try {
-      const event = this.eventModel.findById(eventId)
-      if((await event).isDeleted) {
-        throw new BadRequestException("Deleted Event can't be UPdated")
+      const event = this.eventModel.findById(eventId);
+      if ((await event).isDeleted) {
+        throw new BadRequestException("Deleted Event can't be UPdated");
       }
       await this.eventModel.findByIdAndUpdate(eventId, updatedEventDto);
       return {
@@ -328,21 +340,24 @@ export class EventsService {
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-  }
+  };
 
   // To delete the Event
   deleteEvent = async (eventId: string): Promise<Object> => {
     try {
       const event = await this.eventModel.findById(eventId);
-  
+
       if (!event) {
         throw new NotFoundException('Event not found');
       }
-  
+
       event.isDeleted = true;
-  
-      await this.eventModel.updateOne({ _id: event._id }, { $set: { isDeleted: true } });
-  
+
+      await this.eventModel.updateOne(
+        { _id: event._id },
+        { $set: { isDeleted: true } },
+      );
+
       return {
         message: 'Event has been soft-deleted',
         statusCode: HttpStatus.CREATED,
@@ -351,13 +366,12 @@ export class EventsService {
       throw new NotFoundException('Event not found');
     }
   };
-  
 
   // To cancel the booking for a specific event by admin
   cancelBookingByAdmin = async (
     eventId: string,
     adminName: string,
-  ): Promise<Object> =>{
+  ): Promise<Object> => {
     try {
       const canceledSeats: number[] = [];
       const event = await this.eventModel.findById(eventId).exec();
@@ -385,20 +399,20 @@ export class EventsService {
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-  }
+  };
 
-  getSpecificEvent = async (id: string): Promise<any> =>{
+  getSpecificEvent = async (id: string): Promise<any> => {
     try {
       return this.eventModel.findById(id);
     } catch (error) {
       throw new NotFoundException('Event not found');
     }
-  }
+  };
 
   updateAvailableSeats = async (
     eventId: string,
     cancelledSeats: number[],
-  ): Promise<void> =>{
+  ): Promise<void> => {
     try {
       const event = await this.eventModel.findById(eventId);
 
@@ -413,10 +427,12 @@ export class EventsService {
       event.availableSeats = [...event.availableSeats, ...uniqueCancelledSeats];
 
       // Save the updated event usinng updateOne
-      await this.eventModel.updateOne({ _id: event._id }, { $set
-        : { availableSeats: event.availableSeats } });
+      await this.eventModel.updateOne(
+        { _id: event._id },
+        { $set: { availableSeats: event.availableSeats } },
+      );
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-  }
+  };
 }

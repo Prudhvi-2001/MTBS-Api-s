@@ -22,10 +22,9 @@ import { authenticationConstants } from 'src/users/constants/constants';
       signOptions: { expiresIn: '1d' },
     }),
     ScheduleModule.forRoot(),
-    
   ],
   controllers: [EventsController],
   providers: [EventsService],
-  exports:[EventsService]
+  exports: [EventsService],
 })
 export class EventsModule {}

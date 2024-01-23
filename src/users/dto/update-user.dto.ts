@@ -1,29 +1,38 @@
 import { Optional } from '@nestjs/common';
-import { IsEmail, IsNotEmpty, IsString, Matches, MaxLength, MinLength,IsBoolean } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+  Matches,
+  MaxLength,
+  MinLength,
+  IsBoolean,
+} from 'class-validator';
 
 export class updateUserDto {
-  @IsString({ message: "Must be a String" })
-  @MinLength(5, { message: "Should be greater than 5 Characters" })
+  @IsString({ message: 'Must be a String' })
+  @MinLength(5, { message: 'Should be greater than 5 Characters' })
   @Matches(/^[a-zA-Z0-9\s]+$/, {
-      message: "Username should not consist of Special Characters"
+    message: 'Username should not consist of Special Characters',
   })
   username: string;
 
-  @IsEmail({}, { message: "Not a valid Email" })
-  @IsNotEmpty({ message: "Email should not be empty" })
+  @IsEmail({}, { message: 'Not a valid Email' })
+  @IsNotEmpty({ message: 'Email should not be empty' })
   email: string;
 
   @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/, {
-      message: 'Password must contain at least one uppercase letter, one number, and one special character',
+    message:
+      'Password must contain at least one uppercase letter, one number, and one special character',
   })
-  @MinLength(6, { message: "Password should be more than 6 characters" })
-  @MaxLength(12, { message: "Should not be more than 12 characters" })
+  @MinLength(6, { message: 'Password should be more than 6 characters' })
+  @MaxLength(12, { message: 'Should not be more than 12 characters' })
   password: string;
 
-  @IsBoolean({ message: "isDeleted should be a boolean value" })
+  @IsBoolean({ message: 'isDeleted should be a boolean value' })
   isDeleted?: boolean;
 }
 
 export class UpdateUserBooking extends updateUserDto {
-    bookings: number[];
+  bookings: number[];
 }
