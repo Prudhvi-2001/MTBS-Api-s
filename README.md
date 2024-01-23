@@ -722,3 +722,98 @@ http://localhost:3000/events/deleteEvent?movieId=65a2502676c6c5720eacf3c1
 
 ```
 </ul>
+
+
+
+### Changes Made 
+
+<h5>Made the username as primary key</h5>
+<p>If the user tries update the username it will throw Exception</p>
+
+<img
+  src="readme-Img\3.5.jpg"
+  width="80%"
+  height="80%"
+  style="
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out;
+  "
+ />
+
+ <p>User will be updated if you don't specify the username in request body</p>
+ 
+ <img
+  src="readme-Img\3.6.jpg"
+  width="80%"
+  height="80%"
+  style="
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out;
+  "
+ />
+
+ <h5>Instead of deleting the user completely from the database used  soft delete Approach by implementing the isDeleted property in User Schema</h5>
+
+<p>Intially it will be false</p>
+
+
+<img
+  src="readme-Img\3.7.jpg"
+  width="80%"
+  height="80%"
+  style="
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out;
+  "
+ />
+
+ <p>If the user tries to delete it will not delete completely but isDeleted property will be set to true</p>
+
+
+ <img
+  src="readme-Img\4.0.jpg"
+  width="80%"
+  height="80%"
+  style="
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out;
+  "
+ />
+
+<p>If we tries to get delted user</p>
+
+<img
+  src="readme-Img\3.8.jpg"
+  width="80%"
+  height="80%"
+  style="
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out;
+  "
+ />
+
+ <p>If we tries to update the deleted user</p>
+
+ 
+ <img
+  src="readme-Img\3.9.jpg"
+  width="80%"
+  height="80%"
+  style="
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out;
+  "
+ />
+
+ <p>Similarly, Updated the instead of using save() while updating used updateOne and findOneAndUpdate,
+ Used Es6 functions,
+ Added null checks,
+ Added validations in DTO's.
+ 
+ </p>
