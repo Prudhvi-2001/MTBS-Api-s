@@ -33,6 +33,9 @@ export class Event extends Document {
 
   @Prop({ default: [] })
   bookings: Booking[];
+
+  @Prop({default:false})
+  isDeleted:boolean
 }
 
 export class EventDto{
@@ -47,6 +50,8 @@ export class EventDto{
     availableSeats:number[];
 
     bookings:Booking[]
+
+    isDeleted?:boolean
 }
 export class UpdateEventDto{
   @IsString({message:"Must be a String"})
@@ -59,6 +64,7 @@ export class UpdateEventDto{
   availableSeats:number[];
   @IsArray()
   bookings:Booking[]
+  isDeleted?:boolean
 }
 function duplicateSeats(array:number[]){
   return array.length === new Set(array).size  //checking if the length of the array is equals to the length of the set is created

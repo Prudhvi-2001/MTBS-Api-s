@@ -73,6 +73,9 @@ export class UsersService {
     try {
 
       const user =  await this.userModel.findById(id);
+      if(user.isDeleted === true){
+        throw new NotFoundException("Deleted data is not retrieved")
+      }
       return user;
     } catch (error) {
       throw new NotFoundException('User not found');
@@ -99,7 +102,7 @@ export class UsersService {
   };
   
 
-  updateUser = async (username: string, updateDto: updateUserDto): Promise<User | null> => {
+  updateUser = async (userId:string,username: string, updateDto: updateUserDto): Promise<User | null> => {
     try {
       if (updateDto.username) {
         throw new HttpException("Can't update the username", HttpStatus.BAD_REQUEST);
@@ -108,6 +111,11 @@ export class UsersService {
       if (updateDto.email === '' && updateDto.password === '') {
         throw new BadRequestException("Email and Password can't be null");
       }
+      const user = await this.userModel.findById(userId)
+      if(user.isDeleted === true){
+        throw new BadRequestException("Deleted data can't be updated.")
+      }
+      console.log(user.isDeleted);
       const updatedUser = await this.userModel.findOneAndUpdate(
         { username },
         {
@@ -118,7 +126,7 @@ export class UsersService {
         },
         { new: true }
       );
-
+      
       if (!updatedUser) {
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
       }

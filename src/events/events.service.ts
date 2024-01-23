@@ -300,7 +300,11 @@ export class EventsService {
   // To find the event by id
   findEvent = async (id: string): Promise<Event> =>{
     try {
-      return this.eventModel.findById(id);
+      const event = this.eventModel.findById(id);
+      if((await event).isDeleted === true){
+        throw new BadRequestException("Deleted Event Can't be retrieved..")
+      }
+      return event
     } catch (error) {
       throw new NotFoundException('Event not found');
     }
@@ -312,6 +316,10 @@ export class EventsService {
     updatedEventDto: UpdateEventDto,
   ): Promise<Object> =>{
     try {
+      const event = this.eventModel.findById(eventId)
+      if((await event).isDeleted) {
+        throw new BadRequestException("Deleted Event can't be UPdated")
+      }
       await this.eventModel.findByIdAndUpdate(eventId, updatedEventDto);
       return {
         message: 'Event has been updated',
@@ -323,17 +331,27 @@ export class EventsService {
   }
 
   // To delete the Event
-  deleteEvent = async (eventId: string): Promise<Object> =>{
+  deleteEvent = async (eventId: string): Promise<Object> => {
     try {
-      await this.eventModel.findByIdAndDelete(eventId);
+      const event = await this.eventModel.findById(eventId);
+  
+      if (!event) {
+        throw new NotFoundException('Event not found');
+      }
+  
+      event.isDeleted = true;
+  
+      await this.eventModel.updateOne({ _id: event._id }, { $set: { isDeleted: true } });
+  
       return {
-        message: 'Event has been deleted',
+        message: 'Event has been soft-deleted',
         statusCode: HttpStatus.CREATED,
       };
     } catch (error) {
       throw new NotFoundException('Event not found');
     }
-  }
+  };
+  
 
   // To cancel the booking for a specific event by admin
   cancelBookingByAdmin = async (
