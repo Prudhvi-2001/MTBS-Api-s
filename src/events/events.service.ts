@@ -31,8 +31,13 @@ export class EventsService {
   ) {}
 
   // To create the specific event with available seats and Bookings available
-  async create(event: EventDto, createBy: string): Promise<Object> {
+  async create(event: EventDto, createBy: string): Promise<Object | null> {
     try {
+      
+      if(event.name === ""){
+        throw new BadRequestException("Event name Can't be null")
+
+      } 
       const existingEvent = await this.eventModel
         .findOne({ name: event.name })
         .exec();
@@ -108,86 +113,91 @@ export class EventsService {
   }
 
   // To book the seats
-  async bookSeats(
-    eventId: string,
-    userId: string,
-    seats: number[],
-  ): Promise<Object> {
+  async bookSeats(eventId: string, userId: string, seats: number[]): Promise<Object> {
     try {
-      const event = await this.eventModel.findById(eventId).exec();
-      const hasDuplicates = new Set(seats).size !== seats.length;
-      if (hasDuplicates) {
-        throw new BadRequestException(
-          "Repeated seat numbers aren't allowed to book",
-        );
-      }
-      if (seats.length === 0) {
-        throw new BadRequestException('Please mention seats!');
-      }
-      console.log(seats.length);
-      if (!Array.isArray(seats)) {
-        throw new BadRequestException(
-          'Invalid seats format. Please provide seat numbers.',
-        );
-      }
-      if (!seats) {
-        throw new NotFoundException("Can't find seats");
-      }
-      if (!event) {
-        throw new NotFoundException("Oops! Can't find the Event");
-      }
-      const existingBooking = event.bookings.find(
-        (booking) => booking.user.toString() === userId && !booking.confirmed,
-      );
-
-      if (existingBooking) {
-        throw new BadRequestException(
-          'User had a booking that has yet to be confirmed!',
-        );
-      }
-
-      const availableSeats = event.availableSeats;
-      const unavailableSeats: number[] = [];
-
-      for (const selectedSeat of seats) {
-        if (!availableSeats.includes(selectedSeat)) {
-          unavailableSeats.push(selectedSeat);
+        // Check if seats are null
+        if (!seats || seats.length === 0) {
+            throw new BadRequestException("Seats can't be null to book");
         }
-      }
 
-      if (unavailableSeats.length > 0) {
-        throw new BadRequestException(
-          `Seats ${unavailableSeats.join(', ')} are not available`,
+        const event = await this.eventModel.findById(eventId).exec();
+
+        const hasDuplicates = new Set(seats).size !== seats.length;
+        if (hasDuplicates) {
+            throw new BadRequestException("Repeated seat numbers aren't allowed to book");
+        }
+
+        if (seats.length === 0) {
+            throw new BadRequestException('Please mention seats!');
+        }
+
+        if (!Array.isArray(seats)) {
+            throw new BadRequestException('Invalid seats format. Please provide seat numbers.');
+        }
+
+        if (!seats) {
+            throw new NotFoundException("Can't find seats");
+        }
+
+        if (!event) {
+            throw new NotFoundException("Oops! Can't find the Event");
+        }
+
+        const existingBooking = event.bookings.find(
+            (booking) => booking.user.toString() === userId && !booking.confirmed,
         );
-      }
-      console.log(userId);
-      const user = await this.usersService.getUser(userId);
-      event.bookings.push({
-        user: userId,
-        seats,
-        confirmed: false,
-        createdAt: new Date(),
-      });
 
-      event.availableSeats = availableSeats.filter(
-        (seat) => !seats.includes(seat),
-      );
+        if (existingBooking) {
+            throw new BadRequestException('User had a booking that has yet to be confirmed!');
+        }
 
-      await event.save();
+        const availableSeats = event.availableSeats;
+        const unavailableSeats: number[] = [];
 
-      return {
-        message: 'Please Confirm the booking!',
-        bookingDetails: {
-          user: user.username,
-          event: event.name,
-          seats: seats.join(', '),
-          BookingConfirmation: false,
-        },
-      };
+        for (const selectedSeat of seats) {
+            if (!availableSeats.includes(selectedSeat)) {
+                unavailableSeats.push(selectedSeat);
+            }
+        }
+
+        if (unavailableSeats.length > 0) {
+            throw new BadRequestException(`Seats ${unavailableSeats.join(', ')} are not available`);
+        }
+
+        const user = await this.usersService.getUser(userId);
+
+        // Use updateOne instead of save
+        await this.eventModel.updateOne(
+            { _id: eventId },
+            {
+                $push: {
+                    bookings: {
+                        user: userId,
+                        seats,
+                        confirmed: false,
+                        createdAt: new Date(),
+                    },
+                },
+                $pull: {
+                    availableSeats: { $in: seats },
+                },
+            }
+        );
+
+        return {
+            message: 'Please Confirm the booking!',
+            bookingDetails: {
+                user: user.username,
+                event: event.name,
+                seats: seats.join(', '),
+                BookingConfirmation: false,
+            },
+        };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+        throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-  }
+}
+
 
   // To confirm the ticket
   async confirmBooking(

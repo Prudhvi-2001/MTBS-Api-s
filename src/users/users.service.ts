@@ -27,6 +27,10 @@ export class UsersService {
   // To Create the User
   async create(user: CreateUserDto): Promise<Object> {
     try {
+      //to check whether username , email and password are null
+      if (!user.username || !user.email || !user.password) {
+        throw new BadRequestException('All fields are required');
+      }
       const existingUser = await this.userModel
         .findOne({ username: user.username })
         .exec();
@@ -58,6 +62,10 @@ export class UsersService {
   // To login the User and it will generate a token
   async login(username: string, password: string): Promise<Object> {
     try {
+      if(username === "" && password === ""){
+        throw new BadRequestException("username  and password can't be null")
+      }
+
       const user = await this.userModel.findOne({ username }).exec();
       if (!user || !(await bcrypt.compare(password, user.password))) {
         throw new UnauthorizedException('Invalid username or password');
@@ -94,16 +102,27 @@ export class UsersService {
 
   async updateUser(username: string, updateDto: updateUserDto): Promise<User | null> {
     try {
+      //to check any of the data is null in updateDTo
+      if (Object.keys(updateDto).length === 0) {
+        throw new BadRequestException("Please provide at least one field to be updated");
+      }
         if (updateDto.username) {
             throw new HttpException("Can't update the username", HttpStatus.BAD_REQUEST);
         }
-
-        const updatedUser = await this.userModel.findOneAndUpdate({ username }, {
-            $set: {
-                email: updateDto.email || undefined,
-                password: updateDto.password || undefined,
+        //Null checks for updating the user
+        if(updateDto.email === "" && updateDto.password === ""){
+          throw new BadRequestException("Email and Password can't be null")
+        }
+        const updatedUser = await this.userModel.findOneAndUpdate(
+            { username },
+            {
+                $set: {
+                    email: updateDto.email || undefined,
+                    password: updateDto.password || undefined,
+                },
             },
-        }, { new: true });
+            { new: true }
+        );
 
         if (!updatedUser) {
             throw new HttpException('User not found', HttpStatus.NOT_FOUND);
