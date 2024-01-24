@@ -11,11 +11,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import {
- 
-  Event,
-  
-} from './schemas/event.schema';
+import { Event } from './schemas/event.schema';
 import { EventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { UsersService } from '../users/users.service';
@@ -81,7 +77,6 @@ export class EventsService {
 
   findAll = async (): Promise<Event[]> => {
     try {
-
       return this.eventModel.find().exec();
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);

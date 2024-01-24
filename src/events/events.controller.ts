@@ -17,7 +17,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { EventsService } from './events.service';
-import { Event} from './schemas/event.schema';
+import { Event } from './schemas/event.schema';
 import { EventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { AuthGuard } from './guards/jwt-auth.guard';
@@ -25,21 +25,11 @@ import { AdminGuard } from '../admin/guards/admin.guard';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { selectedDto } from './dto/selected.dto';
 import { ApiOperation } from '@nestjs/swagger';
+import { ApiResponseObj } from 'src/swagger/swagger';
 @ApiTags('Events')
 @Controller('events')
-
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
-  //To create the new Event
-  //ApiEndPoint:http://localhost:3000/events/createEvent
-  //method:POST
-  //req.body ={
-  // "name":"movie",
-  // "date":"11/01/2023",
-  //  availableSeats:[1,2,3,4,5,6,7,8,9,10...]
-  //  bookings:[]
-  //}
-  //req.headers.authorization = token (need to be there to access the routes)
 
   @Post('createEvent')
   @SetMetadata('isAdmin', true)
@@ -50,42 +40,35 @@ export class EventsController {
     summary: 'Create Event',
     description: 'Needs admin token to create the token',
   })
-
+  @ApiResponseObj.Event.createEvent
+  @ApiResponseObj.Event.eventExist
+  @ApiResponseObj.Admin.adminNotFound
   async createEvent(@Req() req, @Body() eventDto: EventDto): Promise<Object> {
     const createdBy: string = req.user.username;
 
     return this.eventsService.create(eventDto, createdBy);
   }
-  //To find all the events
-  //ApiEndPoint : http://localhost:3000/events
-  //Method : GET
 
   @Get()
   @ApiOperation({
-    summary:"Get all the Events"
+    summary: 'Get all the Events',
   })
+  @ApiResponseObj.Event.eventNotFound
+  @ApiResponseObj.Event.getEvent
   findAll(): Promise<Event[]> {
     return this.eventsService.findAll();
   }
-  // To list available seats to book for specific Event
-  // ApiEndpoint : http://localhost:3000/events/:id/availableSeats
-  // Method      : GET
-  // params      : id - is required
 
+  @ApiResponseObj.Event.availableSeats
+  @ApiResponseObj.Event.eventNotFound
   @Get('available-seats')
   @ApiOperation({
     summary: 'Available Seats',
   })
-
   findAvailableSeats(@Query('movieId') eventId: string): Promise<Object> {
     return this.eventsService.findAvailableSeats(eventId);
   }
-  //To book the seats for specific event
-  //ApiEndPoint :http://localhost:3000/:eventId/book-seats
-  //Method       : POST
-  //params       : eventId - is required
-  //req.headers.authorization :token(must be there to book the seats)
-  //req.body={ "seats":[12,13,14]}
+
   @UsePipes(ValidationPipe)
   @UseGuards(AuthGuard)
   @Post('book-seats')
@@ -94,7 +77,9 @@ export class EventsController {
     summary: 'To book seats',
     description: 'THis route need user token to book seats',
   })
-
+  @ApiResponseObj.Event.bookSeats
+  @ApiResponseObj.User.UserNotFound
+  @ApiResponseObj.Event.eventNotFound
   async bookSeats(
     @Query('movieId') eventId: string,
     @Req() req,
@@ -102,15 +87,12 @@ export class EventsController {
   ): Promise<Object> {
     const userId: string = req.user.sub;
 
-    return await this.eventsService.bookSeats(eventId, userId, bookSeatsDto.seats);
+    return await this.eventsService.bookSeats(
+      eventId,
+      userId,
+      bookSeatsDto.seats,
+    );
   }
-
-  //To confirm the booking after the user has reserved
-  //ApiEndPoint : http://localhost:3000/:eventId/confirm-booking
-  //Method       : POST
-  //Params       : eventId - is required
-  //req.headers.authorization : token(to identify who is trying to make a request)
-  //No body params are needed here as we just need to send the event id and auth token
 
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
@@ -118,7 +100,9 @@ export class EventsController {
     summary: 'confirm booking',
     description: 'Needs user token',
   })
-
+  @ApiResponseObj.Event.confirmBooking
+  @ApiResponseObj.Event.eventNotFound
+  @ApiResponseObj.User.UserNotFound
   @Post('confirm-booking')
   async confirmBooking(
     @Query('movieId') eventId: string,
@@ -129,34 +113,32 @@ export class EventsController {
 
     return await this.eventsService.confirmBooking(eventId, userId, username);
   }
-  //to get the specific event
-  //API Endpoint : http://localhost:3000/events/:id
-  //Method        : GET
-  //Params        : id - is required
 
+  @ApiResponseObj.Event.getEvent
+  @ApiResponseObj.Event.eventNotFound
+  @ApiResponseObj.Event.getDeletedEvent
   @Get('getEvent')
   @ApiOperation({
     summary: 'To get Specific Event',
-    description: 'Endpoint to authenticate a user and retrieve an access token.',
+    description:
+      'Endpoint to authenticate a user and retrieve an access token.',
   })
-
   getEvent(@Query('movieId') movieId: string): Promise<Event> {
     return this.eventsService.findEvent(movieId);
   }
 
-  //To update the event
-  //API End Point : http://localhost:3000/events/:eventId/updateEvent
-  //Method         : PUT
-  //Params         : eventId - is required , data - is required
-  //req.body.data contains updated information about the event
   @SetMetadata('isAdmin', true)
   @UseGuards(AdminGuard)
   @ApiBearerAuth()
   @ApiOperation({
-    summary:"Update Event",
-    description:"Needs admin token to access."
+    summary: 'Update Event',
+    description: 'Needs admin token to access.',
   })
   @Put('updateEvent')
+  @ApiResponseObj.Event.updateEvent
+  @ApiResponseObj.Event.deletedupdate
+  @ApiResponseObj.Event.eventNotFound
+  @ApiResponseObj.Admin.adminNotFound
   async UpdateEvent(
     @Req() req,
     @Body() updateEventDto: UpdateEventDto,
@@ -175,9 +157,12 @@ export class EventsController {
   @Delete('deleteEvent')
   @ApiBearerAuth()
   @ApiOperation({
-    summary:"Delete Event",
-    description:"Needs admin token to access"
+    summary: 'Delete Event',
+    description: 'Needs admin token to access',
   })
+  @ApiResponseObj.Event.deleteEvent
+  @ApiResponseObj.Event.eventNotFound
+  @ApiResponseObj.Admin.adminNotFound
   async deleteEvent(@Param('movieId') eventId: string): Promise<Object> {
     return this.eventsService.deleteEvent(eventId);
   }
@@ -188,9 +173,12 @@ export class EventsController {
   @Post('cancel-booking')
   @ApiBearerAuth()
   @ApiOperation({
-    summary:"Cancel unconfirmed booking by admin",
-    description:"Need admin token to access "
+    summary: 'Cancel unconfirmed booking by admin',
+    description: 'Need admin token to access ',
   })
+  @ApiResponseObj.Event.cancelUnconfirmedBookings
+  @ApiResponseObj.Event.eventNotFound
+  @ApiResponseObj.Admin.adminNotFound
   async cancelUnconfirmedAdmin(
     @Req() req,
     @Query('movieId') movieId: string,

@@ -182,24 +182,24 @@ export class UsersService {
     try {
       const user = await this.userModel.findById(userId).exec();
       console.log('User:', user);
-  
+
       if (!user) {
         console.log('User not found');
         throw new NotFoundException('User not found');
       }
-  
+
       if (user.bookings.length === 0) {
         console.log('No bookings found for this user');
         throw new BadRequestException('No bookings found for this user');
       }
-  
+
       return user.bookings || [];
     } catch (error) {
       console.error('Error fetching user bookings:', error);
       throw error; // Rethrow the error
     }
   };
-  
+
   cancelBooking = async (id: string, movieId: string): Promise<any> => {
     try {
       const user = await this.userModel.findById(id);
