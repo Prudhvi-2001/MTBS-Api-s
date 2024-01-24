@@ -1,32 +1,24 @@
-import { Optional } from '@nestjs/common';
-import { ApiProperty } from '@nestjs/swagger';
 import {
-  IsEmail,
-  IsNotEmpty,
+ 
   IsString,
   Matches,
   MaxLength,
   MinLength,
-  IsBoolean,
 } from 'class-validator';
-
-export class updateUserDto {
+import { ApiProperty } from '@nestjs/swagger';
+export class loginDto {
   @IsString({ message: 'Must be a String' })
   @MinLength(5, { message: 'Should be greater than 5 Characters' })
   @Matches(/^[a-zA-Z0-9\s]+$/, {
     message: 'Username should not consist of Special Characters',
   })
-  username: string;
-  
-  @IsEmail({}, { message: 'Not a valid Email' })
-  @IsNotEmpty({ message: 'Email should not be empty' })
   @ApiProperty({
-    description: 'The email address of the user.',
-    format: 'Email',
-    example: 'prudhvi@gmail.com',
+    description: 'The username of the user.',
+    minLength: 5,
+    maxLength: 20,
+    example: 'Prudhvi',
   })
-  email: string;
-
+  username: string;
   @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/, {
     message:
       'Password must contain at least one uppercase letter, one number, and one special character',
@@ -40,11 +32,4 @@ export class updateUserDto {
     example: 'Prudhvi@2001',
   })
   password: string;
-
-  @IsBoolean({ message: 'isDeleted should be a boolean value' })
-  isDeleted?: boolean;
-}
-
-export class UpdateUserBooking extends updateUserDto {
-  bookings: number[];
 }

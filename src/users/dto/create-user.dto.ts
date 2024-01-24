@@ -1,20 +1,23 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
   IsInt,
   IsNotEmpty,
   IsString,
-  MATCHES,
   Matches,
   MaxLength,
   MinLength,
-  max,
-  maxLength,
-  min,
-  minLength,
-  IsOptional
+  IsBoolean,
+  IsOptional,
 } from 'class-validator';
-import { IsBoolean } from 'class-validator';
+
 export class CreateUserDto {
+  @ApiProperty({
+    description: 'The username of the user.',
+    minLength: 5,
+    maxLength: 20,
+    example: 'Prudhvi',
+  })
   @IsString({ message: 'Must be a String' })
   @MinLength(5, { message: 'Should be greater than 5 Characters' })
   @Matches(/^[a-zA-Z0-9\s]+$/, {
@@ -22,10 +25,21 @@ export class CreateUserDto {
   })
   username: string;
 
+  @ApiProperty({
+    description: 'The email address of the user.',
+    format: 'Email',
+    example: 'prudhvi@gmail.com',
+  })
   @IsEmail({}, { message: 'Not a valid Email' })
   @IsNotEmpty({ message: 'Email should not be empty' })
   email: string;
 
+  @ApiProperty({
+    description: 'The password of the user should consists of special Characters, numbers and UpperCase. ',
+    minLength: 6,
+    maxLength: 12,
+    example: 'Prudhvi@2001',
+  })
   @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/, {
     message:
       'Password must contain at least one uppercase letter, one number, and one special character',
@@ -33,6 +47,7 @@ export class CreateUserDto {
   @MinLength(6, { message: 'Password should be more than 6 characters' })
   @MaxLength(12, { message: 'Should not be more than 12 characters' })
   password: string;
+
   @IsOptional()
   @IsBoolean({ message: 'isDeleted should be a boolean value' })
   isDeleted?: boolean;

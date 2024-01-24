@@ -17,11 +17,17 @@ import {
   Query,
 } from '@nestjs/common';
 import { EventsService } from './events.service';
-import { Event, EventDto, UpdateEventDto } from './schemas/event.schema';
+import { Event} from './schemas/event.schema';
+import { EventDto } from './dto/create-event.dto';
+import { UpdateEventDto } from './dto/update-event.dto';
 import { AuthGuard } from './guards/jwt-auth.guard';
 import { AdminGuard } from '../admin/guards/admin.guard';
-import { monitorEventLoopDelay } from 'perf_hooks';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { selectedDto } from './dto/selected.dto';
+import { ApiOperation } from '@nestjs/swagger';
+@ApiTags('Events')
 @Controller('events')
+
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
   //To create the new Event
@@ -39,6 +45,12 @@ export class EventsController {
   @SetMetadata('isAdmin', true)
   @UsePipes(ValidationPipe)
   @UseGuards(AdminGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Create Event',
+    description: 'Needs admin token to create the token',
+  })
+
   async createEvent(@Req() req, @Body() eventDto: EventDto): Promise<Object> {
     const createdBy: string = req.user.username;
 
@@ -49,6 +61,9 @@ export class EventsController {
   //Method : GET
 
   @Get()
+  @ApiOperation({
+    summary:"Get all the Events"
+  })
   findAll(): Promise<Event[]> {
     return this.eventsService.findAll();
   }
@@ -58,6 +73,10 @@ export class EventsController {
   // params      : id - is required
 
   @Get('available-seats')
+  @ApiOperation({
+    summary: 'Available Seats',
+  })
+
   findAvailableSeats(@Query('movieId') eventId: string): Promise<Object> {
     return this.eventsService.findAvailableSeats(eventId);
   }
@@ -70,14 +89,20 @@ export class EventsController {
   @UsePipes(ValidationPipe)
   @UseGuards(AuthGuard)
   @Post('book-seats')
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'To book seats',
+    description: 'THis route need user token to book seats',
+  })
+
   async bookSeats(
     @Query('movieId') eventId: string,
     @Req() req,
-    @Body('seats') seats: number[],
+    @Body() bookSeatsDto: selectedDto,
   ): Promise<Object> {
     const userId: string = req.user.sub;
 
-    return await this.eventsService.bookSeats(eventId, userId, seats);
+    return await this.eventsService.bookSeats(eventId, userId, bookSeatsDto.seats);
   }
 
   //To confirm the booking after the user has reserved
@@ -88,6 +113,12 @@ export class EventsController {
   //No body params are needed here as we just need to send the event id and auth token
 
   @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'confirm booking',
+    description: 'Needs user token',
+  })
+
   @Post('confirm-booking')
   async confirmBooking(
     @Query('movieId') eventId: string,
@@ -104,6 +135,11 @@ export class EventsController {
   //Params        : id - is required
 
   @Get('getEvent')
+  @ApiOperation({
+    summary: 'To get Specific Event',
+    description: 'Endpoint to authenticate a user and retrieve an access token.',
+  })
+
   getEvent(@Query('movieId') movieId: string): Promise<Event> {
     return this.eventsService.findEvent(movieId);
   }
@@ -115,6 +151,11 @@ export class EventsController {
   //req.body.data contains updated information about the event
   @SetMetadata('isAdmin', true)
   @UseGuards(AdminGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary:"Update Event",
+    description:"Needs admin token to access."
+  })
   @Put('updateEvent')
   async UpdateEvent(
     @Req() req,
@@ -132,6 +173,11 @@ export class EventsController {
   @SetMetadata('isAdmin', true)
   @UseGuards(AdminGuard)
   @Delete('deleteEvent')
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary:"Delete Event",
+    description:"Needs admin token to access"
+  })
   async deleteEvent(@Param('movieId') eventId: string): Promise<Object> {
     return this.eventsService.deleteEvent(eventId);
   }
@@ -140,13 +186,17 @@ export class EventsController {
   @SetMetadata('isAdmin', true)
   @UseGuards(AdminGuard)
   @Post('cancel-booking')
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary:"Cancel unconfirmed booking by admin",
+    description:"Need admin token to access "
+  })
   async cancelUnconfirmedAdmin(
     @Req() req,
     @Query('movieId') movieId: string,
     username: string,
   ): Promise<Object> {
     const userName = req.user.username;
-
     return this.eventsService.cancelBookingByAdmin(movieId, userName);
   }
 }

@@ -38,13 +38,8 @@ export class AdminGuard implements CanActivate {
 
 
   private extractTokenFromHeader(request: Request): string | undefined {
-    const authorizationHeader = request.headers.authorization;
-    if (authorizationHeader) {
-      const token = authorizationHeader
-      return token;
-    }
-    return null; // Return null if the Authorization header is not present
-  }
-
+    const [type ,token] = request.headers.authorization.split(" ") ?? [];      
+    return type === "Bearer"? token : undefined
   
+}
 }

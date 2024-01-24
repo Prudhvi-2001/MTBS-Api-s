@@ -18,7 +18,7 @@ import {
   MaxLength,
 } from 'class-validator';
 import { Optional } from '@nestjs/common';
-import { isatty } from 'tty';
+
 export class Booking {
   @Prop({ required: true })
   user: string;
@@ -34,7 +34,6 @@ export class Booking {
   @Prop({ default: Date.now })
   createdAt: Date;
 }
-
 @Schema()
 export class Event extends Document {
   @Prop({ required: true })
@@ -65,51 +64,7 @@ export class Event extends Document {
   isDeleted: boolean;
 }
 
-export class EventDto {
-  @IsString({ message: 'Must be a String' })
-  @IsNotEmpty({ message: 'Name should not be empty' })
-  name: string;
 
-  @IsDateString({}, { message: 'Invalid date format' })
-  @IsOptional()
-  date: Date;
 
-  @IsArray({ message: 'Available seats must be an array' })
-  @IsNotEmpty({ message: 'Available seats should not be empty' })
-  availableSeats: number[];
-  @Optional()
-  bookings: Booking[];
-  @Optional()
-  @IsBoolean({ message: 'isDeleted should be a boolean value' })
-  isDeleted?: boolean;
-}
-export class UpdateEventDto {
-  @IsString({ message: 'Must be a String' })
-  @IsNotEmpty({ message: 'Name should not be empty' })
-  name: string;
 
-  @IsDateString({}, { message: 'Invalid date format' })
-  date: Date;
-
-  @IsArray({ message: 'Available seats must be an array' })
-  @IsNotEmpty({ message: 'Available seats should not be empty' })
-  availableSeats: number[];
-
-  @IsArray({ message: 'Bookings must be an array' })
-  bookings: Booking[];
-
-  @IsBoolean({ message: 'isDeleted should be a boolean value' })
-  isDeleted?: boolean;
-}
-export class BookingDto {
-  @Prop({ required: true })
-  name: string;
-  @IsArray({ message: 'Type must be array' })
-  @IsNotEmpty()
-  seats: number[];
-  @IsBoolean()
-  confirmed: boolean;
-  @IsDate()
-  createdAt: Date;
-}
 export const EventSchema = SchemaFactory.createForClass(Event);

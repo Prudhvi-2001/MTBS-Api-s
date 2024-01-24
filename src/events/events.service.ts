@@ -12,11 +12,12 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import {
-  Booking,
+ 
   Event,
-  EventDto,
-  UpdateEventDto,
+  
 } from './schemas/event.schema';
+import { EventDto } from './dto/create-event.dto';
+import { UpdateEventDto } from './dto/update-event.dto';
 import { UsersService } from '../users/users.service';
 import { selectedDto } from './dto/selected.dto';
 import { Cron, CronExpression } from '@nestjs/schedule';
@@ -46,7 +47,7 @@ export class EventsService {
         throw new NotFoundException("Can't find seats");
       }
       //using es6 find function
-      const seatLimit = event.availableSeats.find(seat => seat > 100);
+      const seatLimit = event.availableSeats.find((seat) => seat > 100);
       if (seatLimit) {
         throw new BadRequestException(
           'Seat number cannot exceed 100!! You have a capacity of 100',
@@ -80,6 +81,7 @@ export class EventsService {
 
   findAll = async (): Promise<Event[]> => {
     try {
+
       return this.eventModel.find().exec();
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -169,7 +171,11 @@ export class EventsService {
       //     unavailableSeats.push(selectedSeat);
       //   }
       // }
-      const unavailableSeats = seats.filter(selectedSeat => !availableSeats.includes(selectedSeat));
+
+      //checking the unavailable seats using es6 function
+      const unavailableSeats = seats.filter(
+        (selectedSeat) => !availableSeats.includes(selectedSeat),
+      );
 
       if (unavailableSeats.length > 0) {
         throw new BadRequestException(

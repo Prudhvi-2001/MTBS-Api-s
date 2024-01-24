@@ -10,7 +10,7 @@ import { authenticationConstants } from 'src/users/constants/constants';
 @Global()
 @Module({
   imports: [
-    forwardRef(() => UsersModule), // Use forwardRef to resolve circular dependency
+    forwardRef(() => UsersModule), // Use d forwardRef to resolve circular dependency
     MongooseModule.forFeature([
       {
         name: Event.name,
