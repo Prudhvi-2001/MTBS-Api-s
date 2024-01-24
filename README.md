@@ -37,6 +37,12 @@ docker run -p 3000:3000 prudhvi2001/nestjs:latest
 $ npm install
 ```
 
+### Swagger Documentation
+
+<p>Start the Project using npm run start:dev</p>
+<p> Click to access the Swagger Documentation <a href="http://localhost:3000/api"> Documentation</a></p>
+
+
 ## How to run Application ?
 
 ```bash
