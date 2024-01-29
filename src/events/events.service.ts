@@ -402,7 +402,7 @@ export class EventsService {
     }
   };
 
-  getSpecificEvent = async (id: string): Promise<any> => {
+  getSpecificEvent = async (id: string): Promise<Event> => {
     try {
       return this.eventModel.findById(id);
     } catch (error) {

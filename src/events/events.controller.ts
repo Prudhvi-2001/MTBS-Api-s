@@ -54,7 +54,7 @@ export class EventsController {
     summary: 'Get all the Events',
   })
   @ApiResponseObj.Event.eventNotFound
-  @ApiResponseObj.Event.getEvent
+  @ApiResponseObj.Event.fetchEvents
   findAll(): Promise<Event[]> {
     return this.eventsService.findAll();
   }

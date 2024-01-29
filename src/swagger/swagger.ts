@@ -109,13 +109,16 @@ export const ApiResponseObj = {
       status: 404,
       description: 'Event not found',
     }),
+    fetchEvents:ApiResponse({
+      type:Event,
+      description:"Fetched all the details of the event"
+    })
   },
 
   Admin: {
     adminNotFound: ApiResponse({
       description: 'Admin not Found',
     }),
-
     adminLogin: ApiResponse({
       status: 202,
       description: 'access_token',

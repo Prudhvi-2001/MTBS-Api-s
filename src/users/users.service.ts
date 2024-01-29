@@ -33,8 +33,7 @@ export class UsersService {
         throw new ForbiddenException(
           'User already exists with the given username!',
         );
-      }
-
+      }      
       const saltRounds = 10;
       const salt = bcrypt.genSaltSync(saltRounds);
       const hashedPassword = await bcrypt.hash(user.password, salt);
@@ -203,8 +202,8 @@ export class UsersService {
   cancelBooking = async (id: string, movieId: string): Promise<any> => {
     try {
       const user = await this.userModel.findById(id);
-      const event = await this.eventsService.getSpecificEvent;
-
+      const event = await this.eventsService.getSpecificEvent(movieId);
+      // Check if the event exists
       if (!event) {
         throw new BadRequestException('Event not found');
       }
@@ -218,8 +217,28 @@ export class UsersService {
 
         user.bookings.splice(bookingIndex, 1);
 
-        await this.eventsService.updateAvailableSeats(movieId, cancelledSeats);
+        // Find the index of the booking in the event's bookings array for the given user
+        const eventBookingIndex = event.bookings.findIndex(
+          (booking) => booking.user === id && event._id.toHexString() === movieId,
+        );
 
+        // If the booking is found in the event, cancel it
+        if (eventBookingIndex !== -1) {
+          event.bookings.splice(eventBookingIndex, 1);
+
+          // Update available seats for the event
+          await this.eventsService.updateAvailableSeats(movieId, cancelledSeats);
+          
+          // Save the updated event
+          await event.save();
+        } else {
+          // If the booking is not found in the event, throw an exception
+          throw new BadRequestException(
+            'Booking not found for the specified user and movie in the event',
+          );
+        }
+
+        // Save the updated user
         await user.save();
 
         return {
@@ -228,7 +247,7 @@ export class UsersService {
         };
       } else {
         throw new BadRequestException(
-          'No bookings found for the specified movie',
+          'No bookings found for the specified movie in the user',
         );
       }
     } catch (error) {
