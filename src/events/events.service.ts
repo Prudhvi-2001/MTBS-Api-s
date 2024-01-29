@@ -263,7 +263,6 @@ export class EventsService {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   };
-
   // To cancel the unconfirmed tickets
   @Cron(CronExpression.EVERY_MINUTE) // to trigger the function every minute to find any unconfirmed bookings
   async cancelUnconfirmedBookings(): Promise<void> {

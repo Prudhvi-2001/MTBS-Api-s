@@ -33,7 +33,7 @@ export class UsersService {
         throw new ForbiddenException(
           'User already exists with the given username!',
         );
-      }      
+      }
       const saltRounds = 10;
       const salt = bcrypt.genSaltSync(saltRounds);
       const hashedPassword = await bcrypt.hash(user.password, salt);
@@ -57,7 +57,8 @@ export class UsersService {
       }
 
       const user = await this.userModel.findOne({ username }).exec();
-      if (!user || !(await bcrypt.compare(password, user.password))) {
+      const comparePassword = await bcrypt.compare(password ,user.password)
+      if (!user || !comparePassword ) {
         throw new UnauthorizedException('Invalid username or password');
       }
 
@@ -217,18 +218,23 @@ export class UsersService {
 
         user.bookings.splice(bookingIndex, 1);
 
-        // Find the index of the booking in the event's bookings array for the given user
+        // Finding the index of the booking in the event's bookings array for the given user
         const eventBookingIndex = event.bookings.findIndex(
-          (booking) => booking.user === id && event._id.toHexString() === movieId,
+          (booking) =>
+            booking.user === id && event._id.toHexString() === movieId,
         );
+        
 
         // If the booking is found in the event, cancel it
         if (eventBookingIndex !== -1) {
           event.bookings.splice(eventBookingIndex, 1);
 
           // Update available seats for the event
-          await this.eventsService.updateAvailableSeats(movieId, cancelledSeats);
-          
+          await this.eventsService.updateAvailableSeats(
+            movieId,
+            cancelledSeats,
+          );
+
           // Save the updated event
           await event.save();
         } else {
